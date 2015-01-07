@@ -1,0 +1,124 @@
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
+using Amazon.CloudSearchDomain.Model;
+using Telerik.Newtonsoft.Json;
+using Telerik.Newtonsoft.Json.Linq;
+using Telerik.Sitefinity.Publishing;
+using Telerik.Sitefinity.Services.Search.Data;
+using Telerik.Sitefinity.Services.Search.Model;
+using Telerik.Sitefinity.Services.Search.Publishing;
+
+namespace SitefinityWebApp
+{
+    public class AmazonResultSet : IResultSet
+    {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AmazonResultSet" /> class.
+        /// </summary>
+        /// <param name="result">The result that holds the data.</param>
+        /// <param name="suggestions">The suggestions.</param>
+        public AmazonResultSet(SearchResult result, List<string> suggestions)
+        {
+            if (result != null)
+            {
+                this.count = result.Hits.Found;
+                this.response = result.Hits;
+            }
+
+            this.suggestions = suggestions;
+        }
+
+        /// <summary>
+        /// Gets a value indicating how many results were found.
+        /// </summary>
+        public int HitCount
+        {
+            get
+            {
+                return (int)this.count;
+            }
+        }
+
+        /// <summary>
+        /// Returns an enumerator that iterates through the collection.
+        /// </summary>
+        /// <returns>IEnumerator<IDocument></returns>
+        public IEnumerator<IDocument> GetEnumerator()
+        {
+            if (this.response.Hit.Count > 0)
+            {
+                return this.response.Hit.Select(h => this.GetDocumentWithAdditionalFields(h)).Cast<IDocument>().GetEnumerator();
+            }
+            else
+            {
+                return this.GetSuggestions().GetEnumerator();
+            }
+        }
+
+        private IEnumerable<IDocument> GetSuggestions()
+        {
+            List<IField> listOfFields = new List<IField>();
+            listOfFields.Add(new Field() { Name = PublishingConstants.SuggestionsField, Value = this.suggestions });
+            List<IDocument> documents = new List<IDocument>();
+            var document = new Document(listOfFields, null);
+            documents.Add(document);
+            return documents;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return ((IEnumerable<IDocument>)this).GetEnumerator();
+        }
+
+        private IDocument GetDocumentWithAdditionalFields(Hit hit)
+        {
+            List<IField> listOfFields = new List<IField>();
+
+            var summaryField = new Field();
+            summaryField.Name = PublishingConstants.FieldSummary;
+            summaryField.Value = string.Empty;
+            listOfFields.Add(summaryField);
+
+            var highlight = this.GetHighlights(hit);
+            listOfFields.Add(new Field() { Name = PublishingConstants.HighLighterResult, Value = highlight });
+            listOfFields.Add(new Field() { Name = PublishingConstants.SuggestionsField, Value = this.suggestions });
+
+            foreach (var field in hit.Fields)
+            {
+                if (field.Key != null)
+                {
+                    var currentField = new Field();
+                    currentField.Name = field.Key;
+                    currentField.Value = field.Value.FirstOrDefault();
+                    listOfFields.Add(currentField);
+                }
+            }
+
+            Document doc = new Document(listOfFields, null);
+            return doc;
+        }
+
+        private string GetHighlights(Hit hit)
+        {
+            var text = string.Empty;
+            foreach (var field in hit.Highlights.Keys)
+            {
+                if (!string.IsNullOrEmpty(text))
+                    text += SearchResultsSeparator;
+
+                var value = hit.Highlights[field];
+                text += value;
+            }
+
+            return text;
+        }
+
+        private readonly Hits response;
+        private readonly long count;
+        private readonly List<string> suggestions;
+        private const string SearchResultsSeparator = ", ";
+    }
+}
