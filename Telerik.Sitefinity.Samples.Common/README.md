@@ -1,1 +1,0 @@
-# amazon-cloud-search-sample
