@@ -33,13 +33,13 @@ namespace SitefinityWebApp
               .Initialize()
               .Localization<AmazonResources>();
 
-            this.AddAmazonService(typeName);
-            this.RegisterAmazonService(typeName);
+            AddAmazonService(typeName);
+            RegisterAmazonService(typeName);
             
-            this.SetProperties();
+            SetProperties();
         }       
 
-        private void SetProperties()
+        private static void SetProperties()
         {
             ConfigManager manager = ConfigManager.GetManager();
             var searchConfig = manager.GetSection<SearchConfig>();
@@ -57,8 +57,9 @@ namespace SitefinityWebApp
                 manager.SaveSection(searchConfig);
             }
         }
- 
-        private void RegisterAmazonService(string typeName)
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        private static void RegisterAmazonService(string typeName)
         {
             try
             {
@@ -78,8 +79,9 @@ namespace SitefinityWebApp
                 Log.Write(ex.InnerException.Message);
             }
         }
- 
-        private void AddAmazonService(string typeName)
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
+        private static void AddAmazonService(string typeName)
         {
             ConfigManager manager = ConfigManager.GetManager();
             var searchConfig = manager.GetSection<SearchConfig>();

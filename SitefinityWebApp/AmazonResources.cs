@@ -36,7 +36,7 @@ namespace SitefinityWebApp
         /// <summary>
         /// Search and Indexing
         /// </summary>
-        [ResourceEntry("SearchResourcesTitle",
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1304:SpecifyCultureInfo", MessageId = "Telerik.Sitefinity.Localization.Resource.get_Item(System.String)"), ResourceEntry("SearchResourcesTitle",
             Value = "Search and Indexes",
             Description = "The title of this class.",
             LastModified = "2009/07/02")]
@@ -51,7 +51,7 @@ namespace SitefinityWebApp
         /// <summary>
         /// Search and Indexing
         /// </summary>
-        [ResourceEntry("AmazonResourcesTitlePlural",
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1304:SpecifyCultureInfo", MessageId = "Telerik.Sitefinity.Localization.Resource.get_Item(System.String)"), ResourceEntry("AmazonResourcesTitlePlural",
             Value = "Search and Indexes",
             Description = "The title plural of this class.",
             LastModified = "2009/07/02")]
@@ -66,7 +66,7 @@ namespace SitefinityWebApp
         /// <summary>
         /// Contains localizable resources for Search and Indexing service module.
         /// </summary>
-        [ResourceEntry("AmazonResourcesDescription",
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1304:SpecifyCultureInfo", MessageId = "Telerik.Sitefinity.Localization.Resource.get_Item(System.String)"), ResourceEntry("AmazonResourcesDescription",
             Value = "Contains localizable resources for Search and Indexing service module.",
             Description = "The description of this class.",
             LastModified = "2009/07/29")]
@@ -83,7 +83,7 @@ namespace SitefinityWebApp
         /// phrase: Amazon Search
         /// </summary>
         /// <value>Amazon Search</value>
-        [ResourceEntry("AmazonSearchServiceTitle",
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Globalization", "CA1304:SpecifyCultureInfo", MessageId = "Telerik.Sitefinity.Localization.Resource.get_Item(System.String)"), ResourceEntry("AmazonSearchServiceTitle",
             Value = "Amazon Search",
             Description = "phrase: Amazon Search",
             LastModified = "2014/11/26")]

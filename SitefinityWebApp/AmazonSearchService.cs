@@ -12,116 +12,134 @@ using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.Services.Search;
 using Telerik.Sitefinity.Services.Search.Data;
 using Telerik.Sitefinity.Services.Search.Web.UI.Public;
+using System.Globalization;
+using System.Security.Permissions;
+using System.Security;
 
 namespace SitefinityWebApp
 {
     public class AmazonSearchService : ISearchService
     {
+        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         public void CreateIndex(string name, IEnumerable<IFieldDefinition> fieldDefinitions)
         {
             //You must add here your accessKey and SecretAccessKey. See here how to get them: http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html
-            IAmazonCloudSearch cloudSearchClient = AWSClientFactory.CreateAmazonCloudSearchClient(AmazonSearchService.AwsAccessKey, AmazonSearchService.AwsSecretAccessKey, RegionEndpoint.EUWest1);
-            try
+            using (IAmazonCloudSearch cloudSearchClient = AWSClientFactory.CreateAmazonCloudSearchClient(AmazonSearchService.AwsAccessKey, AmazonSearchService.AwsSecretAccessKey, RegionEndpoint.EUWest1))
             {
-                CreateDomainRequest domainRequest = new CreateDomainRequest();
-                domainRequest.DomainName = name;
-                cloudSearchClient.CreateDomain(domainRequest);
-
-                foreach (var fieldDefinition in fieldDefinitions)
+                try
                 {
-                    DefineIndexFieldRequest request = new DefineIndexFieldRequest();
-                    request.DomainName = name;
-                    request.IndexField = new IndexField();
-                    request.IndexField.IndexFieldName = fieldDefinition.Name.ToLower();
-                    if (fieldDefinition.Type == null || fieldDefinition.Type == typeof(string))
-                        request.IndexField.IndexFieldType = IndexFieldType.Text;
-                    if (fieldDefinition.Type == typeof(string[]))
-                        request.IndexField.IndexFieldType = IndexFieldType.TextArray;
-                    if (fieldDefinition.Type == typeof(int))
-                        request.IndexField.IndexFieldType = IndexFieldType.Int;
-                    if (fieldDefinition.Type == typeof(DateTime))
-                        request.IndexField.IndexFieldType = IndexFieldType.Date;
-                    cloudSearchClient.DefineIndexField(request);
-                }
+                    CreateDomainRequest domainRequest = new CreateDomainRequest();
+                    domainRequest.DomainName = name;
+                    cloudSearchClient.CreateDomain(domainRequest);
 
-                SearchResults searchResults = new SearchResults();
-                foreach (var field in searchResults.HighlightedFields)
+                    if (fieldDefinitions == null)
+                        throw new ArgumentNullException("fieldDefinitions");
+
+                    foreach (var fieldDefinition in fieldDefinitions)
+                    {
+                        DefineIndexFieldRequest request = new DefineIndexFieldRequest();
+                        request.DomainName = name;
+                        request.IndexField = new IndexField();
+                        request.IndexField.IndexFieldName = fieldDefinition.Name.ToUpperInvariant();
+                        if (fieldDefinition.Type == null || fieldDefinition.Type == typeof(string))
+                            request.IndexField.IndexFieldType = IndexFieldType.Text;
+                        if (fieldDefinition.Type == typeof(string[]))
+                            request.IndexField.IndexFieldType = IndexFieldType.TextArray;
+                        if (fieldDefinition.Type == typeof(int))
+                            request.IndexField.IndexFieldType = IndexFieldType.Int;
+                        if (fieldDefinition.Type == typeof(DateTime))
+                            request.IndexField.IndexFieldType = IndexFieldType.Date;
+                        cloudSearchClient.DefineIndexField(request);
+                    }
+
+                    SearchResults searchResults = new SearchResults();
+                    foreach (var field in searchResults.HighlightedFields)
+                    {
+                        Suggester suggester = new Suggester();
+                        DocumentSuggesterOptions suggesterOptions = new DocumentSuggesterOptions();
+                        suggesterOptions.FuzzyMatching = SuggesterFuzzyMatching.None;
+                        suggesterOptions.SourceField = field.ToUpperInvariant();
+                        suggester.DocumentSuggesterOptions = suggesterOptions;
+                        suggester.SuggesterName = field.ToUpperInvariant() + "_suggester";
+                        DefineSuggesterRequest defineRequest = new DefineSuggesterRequest();
+                        defineRequest.DomainName = name;
+                        defineRequest.Suggester = suggester;
+                        cloudSearchClient.DefineSuggester(defineRequest);
+                    }
+                    searchResults.Dispose();
+
+                    IndexDocumentsRequest documentRequest = new IndexDocumentsRequest();
+                    documentRequest.DomainName = name;
+                    cloudSearchClient.IndexDocuments(documentRequest);
+                }
+                catch (BaseException ex)
                 {
-                    Suggester suggester = new Suggester();
-                    DocumentSuggesterOptions suggesterOptions = new DocumentSuggesterOptions();
-                    suggesterOptions.FuzzyMatching = SuggesterFuzzyMatching.None;
-                    suggesterOptions.SourceField = field.ToLower();
-                    suggester.DocumentSuggesterOptions = suggesterOptions;
-                    suggester.SuggesterName = field.ToLower() + "_suggester";
-                    DefineSuggesterRequest defineRequest = new DefineSuggesterRequest();
-                    defineRequest.DomainName = name;
-                    defineRequest.Suggester = suggester;
-                    cloudSearchClient.DefineSuggester(defineRequest);
+                    Log.Write(ex.InnerException.Message);
                 }
-
-                IndexDocumentsRequest documentRequest = new IndexDocumentsRequest();
-                documentRequest.DomainName = name;
-                cloudSearchClient.IndexDocuments(documentRequest);
-            }
-            catch (BaseException ex)
-            {
-                Log.Write(ex.InnerException.Message);
-            }
-            catch (LimitExceededException ex)
-            {
-                Log.Write(ex.InnerException.Message);
-            }
-            catch (InternalException ex)
-            {
-                Log.Write(ex.InnerException.Message);
+                catch (LimitExceededException ex)
+                {
+                    Log.Write(ex.InnerException.Message);
+                }
+                catch (InternalException ex)
+                {
+                    Log.Write(ex.InnerException.Message);
+                }
             }
         }
 
+        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         public void DeleteIndex(string name)
         {
-            IAmazonCloudSearch cloudSearchClient = AWSClientFactory.CreateAmazonCloudSearchClient("AKIAJ6MPIX37TLIXW7HQ", "DnrFrw9ZEr7g4Svh0rh6z+s3PxMaypl607eEUehQ", RegionEndpoint.EUWest1);
-            DeleteDomainRequest domainRequest = new DeleteDomainRequest();
-            domainRequest.DomainName = name;
-            try
+            using (IAmazonCloudSearch cloudSearchClient = AWSClientFactory.CreateAmazonCloudSearchClient("AKIAJ6MPIX37TLIXW7HQ", "DnrFrw9ZEr7g4Svh0rh6z+s3PxMaypl607eEUehQ", RegionEndpoint.EUWest1))
             {
-                cloudSearchClient.DeleteDomain(domainRequest);
-            }
-            catch (BaseException ex)
-            {
-                Log.Write(ex.InnerException.Message);
-            }
-            catch (InternalException ex)
-            {
-                Log.Write(ex.InnerException.Message);
+                DeleteDomainRequest domainRequest = new DeleteDomainRequest();
+                domainRequest.DomainName = name;
+                try
+                {
+                    cloudSearchClient.DeleteDomain(domainRequest);
+                }
+                catch (BaseException ex)
+                {
+                    Log.Write(ex.InnerException.Message);
+                }
+                catch (InternalException ex)
+                {
+                    Log.Write(ex.InnerException.Message);
+                }
             }
         }
 
+        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         public bool IndexExists(string indexName)
         {
-            IAmazonCloudSearch cloudSearchClient = AWSClientFactory.CreateAmazonCloudSearchClient("AKIAJ6MPIX37TLIXW7HQ", "DnrFrw9ZEr7g4Svh0rh6z+s3PxMaypl607eEUehQ", RegionEndpoint.EUWest1);
-            bool exists = false;
-            try
+            using (
+            IAmazonCloudSearch cloudSearchClient = AWSClientFactory.CreateAmazonCloudSearchClient("AKIAJ6MPIX37TLIXW7HQ", "DnrFrw9ZEr7g4Svh0rh6z+s3PxMaypl607eEUehQ", RegionEndpoint.EUWest1))
             {
-                ListDomainNamesResponse response = cloudSearchClient.ListDomainNames();
-                var index = response.DomainNames.Where(dn => dn.Key == indexName).First();
-                exists = index.Value != null;
+                bool exists = false;
+                try
+                {
+                    ListDomainNamesResponse response = cloudSearchClient.ListDomainNames();
+                    var index = response.DomainNames.Where(dn => dn.Key == indexName).First();
+                    exists = index.Value != null;
+                }
+                catch (BaseException ex)
+                {
+                    Log.Write(ex.InnerException.Message);
+                }
+                catch (ArgumentNullException ex)
+                {
+                    Log.Write(ex.InnerException.Message);
+                }
+                return exists;
             }
-            catch (BaseException ex)
-            {
-                Log.Write(ex.InnerException.Message);
-            }
-            catch (ArgumentNullException ex)
-            {
-                Log.Write(ex.InnerException.Message);
-            }
-
-            return exists;
         }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2123:OverrideLinkDemandsShouldBeIdenticalToBase")]
         public void RemoveDocument(string indexName, IField identityField)
         {
         }
 
+        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         public void RemoveDocuments(string indexName, IEnumerable<IDocument> documents)
         {
             CloudSearch<AmazonDoc> cloudSearch = new CloudSearch<AmazonDoc>("index2-cdduimbipgk3rpnfgny6posyzy.eu-west-1.cloudsearch.amazonaws.com", "2013-01-01");
@@ -141,7 +159,8 @@ namespace SitefinityWebApp
                 if (value is DateTime)
                 {
                     var dateTime = (DateTime)clause.Value;
-                    value = dateTime.ToUniversalTime().ToString("o");
+
+                    value = dateTime.ToUniversalTime().ToString("o", CultureInfo.InvariantCulture);
                 }
                 else if (value is int)
                 {
@@ -159,9 +178,9 @@ namespace SitefinityWebApp
 
                 switch (clause.FilterOperator)
                 {
-                    case FilterOperator.Equals: result.Append(string.Format("{0}:{1} ", clause.Field.ToLower(), value));
+                    case FilterOperator.Equals: result.Append(string.Format("{0}:{1} ", clause.Field.ToUpperInvariant(), value));
                         break;
-                    case FilterOperator.Contains: result.Append(string.Format("{0}:{1}", clause.Field.ToLower(), value));
+                    case FilterOperator.Contains: result.Append(string.Format("{0}:{1}", clause.Field.ToUpperInvariant(), value));
                         break;
                     case FilterOperator.Greater: result.Append(string.Format("{0}:[{1}, {2}", clause.Field, value, "}"));
                         break;
@@ -182,6 +201,7 @@ namespace SitefinityWebApp
             return result.ToString();
         }
 
+        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         public IResultSet Search(ISearchQuery query)
         {
             AmazonCloudSearchDomainConfig config = new AmazonCloudSearchDomainConfig();
@@ -191,6 +211,10 @@ namespace SitefinityWebApp
             List<string> suggestions = new List<string>();
             StringBuilder highlights = new StringBuilder();
             highlights.Append("{\'");
+
+            if (query == null)
+                throw new ArgumentNullException("query");
+
             foreach (var field in query.HighlightedFields)
             {
                 if (highlights.Length > 2)
@@ -198,11 +222,11 @@ namespace SitefinityWebApp
                     highlights.Append(", \'");
                 }
 
-                highlights.Append(field.ToLower());
+                highlights.Append(field.ToUpperInvariant());
                 highlights.Append("\':{} ");
                 SuggestRequest suggestRequest = new SuggestRequest();
                 Suggester suggester = new Suggester();
-                suggester.SuggesterName = field.ToLower() + "_suggester";
+                suggester.SuggesterName = field.ToUpperInvariant() + "_suggester";
                 suggestRequest.Suggester = suggester.SuggesterName;
                 suggestRequest.Size = query.Take;
                 suggestRequest.Query = query.Text;
@@ -239,9 +263,11 @@ namespace SitefinityWebApp
             searchRequest.Query = query.Text;
             searchRequest.QueryParser = QueryParser.Simple;
             var result = domainClient.Search(searchRequest).SearchResult;
+            
             return new AmazonResultSet(result, suggestions);
         }
 
+        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         public void UpdateIndex(string name, IEnumerable<IDocument> documents)
         {
             CloudSearch<AmazonDoc> cloudSearch = new CloudSearch<AmazonDoc>("index2-cdduimbipgk3rpnfgny6posyzy.eu-west-1.cloudsearch.amazonaws.com", "2013-01-01");
@@ -251,11 +277,14 @@ namespace SitefinityWebApp
         public const string ServiceName = "AmazonSearchService";
         public const string AccessKey = "AccessKey";
         public const string SecretAccessKey = "SecretAccessKey";
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Api")]
         public const string ApiVersion = "ApiVersion";
         public const string DocumentEndPoint = "DocumentEndPoint";
         public const string SearchEndPoint = "SearchEndPoint";
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Aws")]
         public const string AwsAccessKey = "AwsAccessKey";
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Aws")]
         public const string AwsSecretAccessKey = "AKIAJ6MPIX37TLIXW7HQ";
     }
 }

@@ -7,7 +7,10 @@
     using Telerik.Sitefinity.Services.Search.Data;
     using Telerik.Sitefinity.Services.Search.Model;
     using Telerik.Sitefinity.Services.Search.Publishing;
+    using System.Globalization;
+    using System.Security.Permissions;
 
+    [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
     public class AmazonDoc : Document, ICloudSearchDocument
     {
         /// <summary>
@@ -25,6 +28,9 @@
         {
             List<Field> fields = new List<Field>();
 
+            if (doc == null)
+                throw new ArgumentNullException("doc");
+
             foreach (IField field in doc.Fields)
             {
                 if (field.Value == null || field.Name == doc.IdentityField.Name)
@@ -33,13 +39,12 @@
                 }
 
                 Field convertedField = new Field();
-                convertedField.Name = field.Name.ToLower();                
+                convertedField.Name = field.Name.ToLower(CultureInfo.CurrentCulture);
                 convertedField.Value = field.Value;
                 fields.Add(convertedField);
             }
 
             this.Fields = fields;
-            this.IdentityField = doc.IdentityField;
         }
 
         /// <summary>

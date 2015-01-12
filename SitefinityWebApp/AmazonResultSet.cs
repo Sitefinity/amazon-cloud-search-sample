@@ -10,9 +10,11 @@ using Telerik.Sitefinity.Publishing;
 using Telerik.Sitefinity.Services.Search.Data;
 using Telerik.Sitefinity.Services.Search.Model;
 using Telerik.Sitefinity.Services.Search.Publishing;
+using System.Security.Permissions;
 
 namespace SitefinityWebApp
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix"), EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
     public class AmazonResultSet : IResultSet
     {
         /// <summary>
@@ -20,13 +22,14 @@ namespace SitefinityWebApp
         /// </summary>
         /// <param name="result">The result that holds the data.</param>
         /// <param name="suggestions">The suggestions.</param>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
         public AmazonResultSet(SearchResult result, List<string> suggestions)
         {
-            if (result != null)
-            {
-                this.count = result.Hits.Found;
-                this.response = result.Hits;
-            }
+            if (result == null)
+                throw new ArgumentNullException("result");
+
+            this.count = result.Hits.Found;
+            this.response = result.Hits;
 
             this.suggestions = suggestions;
         }
@@ -46,6 +49,7 @@ namespace SitefinityWebApp
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>IEnumerator<IDocument></returns>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2123:OverrideLinkDemandsShouldBeIdenticalToBase")]
         public IEnumerator<IDocument> GetEnumerator()
         {
             if (this.response.Hit.Count > 0)
@@ -82,7 +86,7 @@ namespace SitefinityWebApp
             summaryField.Value = string.Empty;
             listOfFields.Add(summaryField);
 
-            var highlight = this.GetHighlights(hit);
+            var highlight = GetHighlights(hit);
             listOfFields.Add(new Field() { Name = PublishingConstants.HighLighterResult, Value = highlight });
             listOfFields.Add(new Field() { Name = PublishingConstants.SuggestionsField, Value = this.suggestions });
 
@@ -101,7 +105,7 @@ namespace SitefinityWebApp
             return doc;
         }
 
-        private string GetHighlights(Hit hit)
+        private static string GetHighlights(Hit hit)
         {
             var text = string.Empty;
             foreach (var field in hit.Highlights.Keys)
