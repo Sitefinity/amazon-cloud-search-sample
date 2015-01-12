@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Security;
+using System.Security.Permissions;
 using System.Text;
 using AmazingCloudSearch;
 using Amazon;
@@ -12,9 +15,6 @@ using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.Services.Search;
 using Telerik.Sitefinity.Services.Search.Data;
 using Telerik.Sitefinity.Services.Search.Web.UI.Public;
-using System.Globalization;
-using System.Security.Permissions;
-using System.Security;
 
 namespace SitefinityWebApp
 {
@@ -66,6 +66,7 @@ namespace SitefinityWebApp
                         defineRequest.Suggester = suggester;
                         cloudSearchClient.DefineSuggester(defineRequest);
                     }
+
                     searchResults.Dispose();
 
                     IndexDocumentsRequest documentRequest = new IndexDocumentsRequest();
@@ -130,6 +131,7 @@ namespace SitefinityWebApp
                 {
                     Log.Write(ex.InnerException.Message);
                 }
+
                 return exists;
             }
         }

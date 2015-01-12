@@ -2,13 +2,13 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Globalization;
     using System.Linq;
+    using System.Security.Permissions;
     using AmazingCloudSearch.Contract;
     using Telerik.Sitefinity.Services.Search.Data;
     using Telerik.Sitefinity.Services.Search.Model;
     using Telerik.Sitefinity.Services.Search.Publishing;
-    using System.Globalization;
-    using System.Security.Permissions;
 
     [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
     public class AmazonDoc : Document, ICloudSearchDocument

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Permissions;
 using System.Text.RegularExpressions;
 using Amazon.CloudSearchDomain.Model;
 using Telerik.Newtonsoft.Json;
@@ -10,7 +11,6 @@ using Telerik.Sitefinity.Publishing;
 using Telerik.Sitefinity.Services.Search.Data;
 using Telerik.Sitefinity.Services.Search.Model;
 using Telerik.Sitefinity.Services.Search.Publishing;
-using System.Security.Permissions;
 
 namespace SitefinityWebApp
 {
