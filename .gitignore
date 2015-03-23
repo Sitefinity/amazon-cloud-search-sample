@@ -1,6 +1,14 @@
-bin/Debug/
-obj/Debug/
+bin/
+obj/
 packages/
 .nuget/NuGet.exe
 *.dll
 *.pdb
+*.suo
+Nuget.exe
+SitefinityWebApp/App_Data/Sitefinity/Configuration/*
+!SitefinityWebApp/App_Data/Sitefinity/Configuration/StartupConfig.config
+SitefinityWebApp/App_Data/Sitefinity/Logs/*
+*.lic
+SitefinityWebApp/ResourcePackages/*
+*.Cache

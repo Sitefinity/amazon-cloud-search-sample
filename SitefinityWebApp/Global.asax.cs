@@ -7,6 +7,7 @@ using System.Web.SessionState;
 using Telerik.Sitefinity;
 using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.Configuration;
+using Telerik.Sitefinity.Data;
 using Telerik.Sitefinity.Samples.Common;
 using Telerik.Sitefinity.Search.Configuration;
 using Telerik.Sitefinity.Services;
@@ -20,24 +21,42 @@ namespace SitefinityWebApp
     {
         protected void Application_Start(object sender, EventArgs e)
         {
-            SystemManager.ApplicationStart += this.SystemManager_ApplicationStart;
+            //SystemManager.ApplicationStart += this.SystemManager_ApplicationStart;
+            Bootstrapper.Initialized += Bootstrapper_Initialized;
         }
 
-        private void SystemManager_ApplicationStart(object sender, EventArgs e)
+        private void Bootstrapper_Initialized(object sender, ExecutedEventArgs e)
         {
-            SampleUtilities.CreateUsersAndRoles();  
-   
-            var typeName = typeof(AmazonSearchService).FullName;
-            App.WorkWith()
-              .Module(SearchModule.ModuleName)
-              .Initialize()
-              .Localization<AmazonResources>();
+            if ((Bootstrapper.IsDataInitialized) && (e.CommandName == "Bootstrapped"))
+            {
+                var typeName = typeof(AmazonSearchService).FullName;
+                App.WorkWith()
+                  .Module(SearchModule.ModuleName)
+                  .Initialize()
+                  .Localization<AmazonResources>();
 
-            AddAmazonService(typeName);
-            RegisterAmazonService(typeName);
+                AddAmazonService(typeName);
+                RegisterAmazonService(typeName);
+
+                SetProperties();
+            }
+        }
+
+        //private void SystemManager_ApplicationStart(object sender, EventArgs e)
+        //{
+        //    //SampleUtilities.CreateUsersAndRoles();  
+   
+        //    var typeName = typeof(AmazonSearchService).FullName;
+        //    App.WorkWith()
+        //      .Module(SearchModule.ModuleName)
+        //      .Initialize()
+        //      .Localization<AmazonResources>();
+
+        //    AddAmazonService(typeName);
+        //    RegisterAmazonService(typeName);
             
-            SetProperties();
-        }       
+        //    SetProperties();
+        //}       
 
         private static void SetProperties()
         {

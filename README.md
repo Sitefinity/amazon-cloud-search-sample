@@ -3,8 +3,7 @@
 
 [![Build Status](http://sdk-jenkins-ci.cloudapp.net/buildStatus/icon?job=Telerik.Sitefinity.Samples.AmazonCloudSearchService.CI)](http://sdk-jenkins-ci.cloudapp.net/job/Telerik.Sitefinity.Samples.AmazonCloudSearchService.CI/)
 
-The Amazon cloud search sample is module-free and is suitable for people who want to build a project from ground-up. 
-
+The Amazon cloud search sample is module-free and is suitable for people who want to build a project from ground-up.   
 Using the Amazon search sample, you can build an Amazon cloud search service.
 
 ### Requirements
@@ -33,17 +32,15 @@ For a history and additional information related to package versions on differen
 
 
 
-1. In Solution Explorer, navigate to _SitefinityWebApp_ -> *App_Data* -> _Sitefinity_ -> _Configuration_ and select the **DataConfig.config** file. 
-2. Modify the **connectionString** value to match your server address.
+1. In Solution Explorer, navigate to _SitefinityWebApp_ » *App_Data* » _Sitefinity_ » _Configuration_ and select the **StartupConfig.config** file. 
+2. Modify the **dbType**, **sqlInstance** and **dbName** values to match your server settings.
 3. Build the solution.
 
-For version-specific details about the required Sitefinity NuGet packages for this sample application, click on [Releases]
- (https://github.com/Sitefinity-SDK/amazon-cloud-search-sample/releases).
+For version-specific details about the required Sitefinity NuGet packages for this sample application, click on [Releases](https://github.com/Sitefinity-SDK/amazon-cloud-search-sample/releases).
 
 ### Login
 
-To login to Sitefinity backend, use the following credentials: 
-
-**Username:** admin
+To login to Sitefinity backend, use the following credentials:   
+**Username:** admin  
 **Password:** password
 
