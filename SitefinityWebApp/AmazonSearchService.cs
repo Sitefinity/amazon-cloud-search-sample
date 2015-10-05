@@ -309,6 +309,6 @@ namespace SitefinityWebApp
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Aws")]
         public const string AwsAccessKey = "AwsAccessKey";
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Aws")]
-        public const string AwsSecretAccessKey = string.Empty;
+        public readonly string AwsSecretAccessKey = string.Empty;
     }
 }
