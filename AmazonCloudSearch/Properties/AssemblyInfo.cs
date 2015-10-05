@@ -1,16 +1,18 @@
-﻿using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
+using System.Web;
+using System.Web.UI;
+using System.Reflection;
+using AmazonCloudSearch;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Telerik.Sitefinity.Samples.Common")]
+[assembly: AssemblyTitle("AmazonCloudSearch")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
-[assembly: AssemblyProduct("Telerik.Sitefinity.Samples.Common")]
-[assembly: AssemblyCopyright("Copyright © Telerik 2015")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("AmazonCloudSearch")]
+[assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +22,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("e0cf0d4e-603f-454c-b488-3a3b84cb0c0e")]
+[assembly: Guid("d5392b9d-6ab1-4d55-b28a-44c5d8e87bc2")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -34,3 +36,4 @@ using System.Runtime.InteropServices;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: PreApplicationStartMethod(typeof(AmazonCloudSearchInstaller), "PreApplicationStart")]

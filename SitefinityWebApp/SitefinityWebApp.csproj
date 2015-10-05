@@ -797,9 +797,6 @@
     <Compile Include="AmazonResultSet.cs" />
     <Compile Include="AmazonSearchService.cs" />
     <Compile Include="AzureWebRole.cs" />
-    <Compile Include="Global.asax.cs">
-      <DependentUpon>Global.asax</DependentUpon>
-    </Compile>
     <Compile Include="GlobalSuppressions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -807,7 +804,6 @@
     <Content Include="ClientBin\Telerik.Sitefinity.Analytics.xap" />
     <Content Include="ClientBin\Telerik.Sitefinity.Silverlight.xap" />
     <Content Include="Default.aspx" />
-    <Content Include="Global.asax" />
     <Content Include="ResourcePackages\Bootstrap\assets\dist\css\styles.css" />
     <Content Include="ResourcePackages\Bootstrap\assets\dist\css\styles.min.css" />
     <Content Include="ResourcePackages\Bootstrap\assets\dist\fonts\sf-icon-font.svg" />
@@ -1177,6 +1173,10 @@
     <Content Include="App_Data\RadSpell\fr-FR.tdf" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\AmazonCloudSearch\AmazonCloudSearch.csproj">
+      <Project>{183818da-a289-41d8-a93d-ed7deacc4cdc}</Project>
+      <Name>AmazonCloudSearch</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Telerik.Sitefinity.Samples.Common\Telerik.Sitefinity.Samples.Common.csproj">
       <Name>Telerik.Sitefinity.Samples.Common</Name>
     </ProjectReference>
