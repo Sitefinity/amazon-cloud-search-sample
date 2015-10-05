@@ -29,7 +29,7 @@
             List<Field> fields = new List<Field>();
 
             if (doc == null)
-                throw new ArgumentNullException("doc");
+                throw new ArgumentNullException("Document is not valid.");
 
             foreach (IField field in doc.Fields)
             {
@@ -45,7 +45,7 @@
             }
 
             this.Fields = fields;
-        }
+        }        
 
         /// <summary>
         /// Gets or sets a value indicating the identity field.

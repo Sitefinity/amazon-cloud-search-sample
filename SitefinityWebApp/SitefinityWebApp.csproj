@@ -69,14 +69,16 @@
     <Reference Include="AjaxControlToolkit">
       <HintPath>packages\AjaxControlToolkit.3.0.20820.0\lib\AjaxControlToolkit.dll</HintPath>
     </Reference>
-    <Reference Include="AmazingCloudSearch">
-      <HintPath>Dependencies\AmazingCloudSearch.dll</HintPath>
+    <Reference Include="AmazingCloudSearch, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\Telerik.Sitefinity.CloudSearch.1.0.0\lib\AmazingCloudSearch.dll</HintPath>
     </Reference>
     <Reference Include="AntiXssLibrary">
       <HintPath>packages\AntiXSS.4.3.0\lib\net40\AntiXssLibrary.dll</HintPath>
     </Reference>
-    <Reference Include="AWSSDK">
-      <HintPath>packages\AWSSDK.2.3.10.0\lib\net35\AWSSDK.dll</HintPath>
+    <Reference Include="AWSSDK, Version=2.3.52.0, Culture=neutral, PublicKeyToken=9f476d3089b52be3, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>packages\AWSSDK.2.3.52.0\lib\net45\AWSSDK.dll</HintPath>
     </Reference>
     <Reference Include="CsvHelper">
       <HintPath>packages\CsvHelper.2.2.2\lib\net40-client\CsvHelper.dll</HintPath>

@@ -15,6 +15,8 @@ using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.Services.Search;
 using Telerik.Sitefinity.Services.Search.Data;
 using Telerik.Sitefinity.Services.Search.Web.UI.Public;
+using Telerik.Sitefinity.Configuration;
+using Telerik.Sitefinity.Services.Search.Configuration;
 
 namespace SitefinityWebApp
 {
@@ -23,14 +25,23 @@ namespace SitefinityWebApp
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         public void CreateIndex(string name, IEnumerable<IFieldDefinition> fieldDefinitions)
         {
+            ConfigManager manager = ConfigManager.GetManager();
+            var searchConfig = manager.GetSection<SearchConfig>();
+
+            var amazonSearchParameters = searchConfig.SearchServices[AmazonSearchService.ServiceName].Parameters;
             //You must add here your accessKey and SecretAccessKey. See here how to get them: http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html
-            using (IAmazonCloudSearch cloudSearchClient = AWSClientFactory.CreateAmazonCloudSearchClient(AmazonSearchService.AwsAccessKey, AmazonSearchService.AwsSecretAccessKey, RegionEndpoint.EUWest1))
+            using (IAmazonCloudSearch cloudSearchClient = AWSClientFactory.CreateAmazonCloudSearchClient(amazonSearchParameters[AccessKey], amazonSearchParameters[SecretAccessKey], RegionEndpoint.EUWest1))
             {
                 try
                 {
-                    CreateDomainRequest domainRequest = new CreateDomainRequest();
-                    domainRequest.DomainName = name;
-                    cloudSearchClient.CreateDomain(domainRequest);
+                    
+                    var domainNames = cloudSearchClient.ListDomainNames();
+                    if(!domainNames.DomainNames.ContainsKey(name))
+                    {
+                        CreateDomainRequest domainRequest = new CreateDomainRequest();
+                        domainRequest.DomainName = name;
+                        cloudSearchClient.CreateDomain(domainRequest);
+                    }
 
                     if (fieldDefinitions == null)
                         throw new ArgumentNullException("fieldDefinitions");
@@ -40,7 +51,7 @@ namespace SitefinityWebApp
                         DefineIndexFieldRequest request = new DefineIndexFieldRequest();
                         request.DomainName = name;
                         request.IndexField = new IndexField();
-                        request.IndexField.IndexFieldName = fieldDefinition.Name.ToUpperInvariant();
+                        request.IndexField.IndexFieldName = fieldDefinition.Name.ToLowerInvariant();
                         if (fieldDefinition.Type == null || fieldDefinition.Type == typeof(string))
                             request.IndexField.IndexFieldType = IndexFieldType.Text;
                         if (fieldDefinition.Type == typeof(string[]))
@@ -58,9 +69,9 @@ namespace SitefinityWebApp
                         Suggester suggester = new Suggester();
                         DocumentSuggesterOptions suggesterOptions = new DocumentSuggesterOptions();
                         suggesterOptions.FuzzyMatching = SuggesterFuzzyMatching.None;
-                        suggesterOptions.SourceField = field.ToUpperInvariant();
+                        suggesterOptions.SourceField = field.ToLowerInvariant();
                         suggester.DocumentSuggesterOptions = suggesterOptions;
-                        suggester.SuggesterName = field.ToUpperInvariant() + "_suggester";
+                        suggester.SuggesterName = field.ToLowerInvariant() + "_suggester";
                         DefineSuggesterRequest defineRequest = new DefineSuggesterRequest();
                         defineRequest.DomainName = name;
                         defineRequest.Suggester = suggester;
@@ -91,7 +102,11 @@ namespace SitefinityWebApp
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         public void DeleteIndex(string name)
         {
-            using (IAmazonCloudSearch cloudSearchClient = AWSClientFactory.CreateAmazonCloudSearchClient("AKIAJ6MPIX37TLIXW7HQ", "DnrFrw9ZEr7g4Svh0rh6z+s3PxMaypl607eEUehQ", RegionEndpoint.EUWest1))
+            ConfigManager manager = ConfigManager.GetManager();
+            var searchConfig = manager.GetSection<SearchConfig>();
+
+            var amazonSearchParameters = searchConfig.SearchServices[AmazonSearchService.ServiceName].Parameters;
+            using (IAmazonCloudSearch cloudSearchClient = AWSClientFactory.CreateAmazonCloudSearchClient(amazonSearchParameters[AccessKey], amazonSearchParameters[SecretAccessKey], RegionEndpoint.EUWest1))
             {
                 DeleteDomainRequest domainRequest = new DeleteDomainRequest();
                 domainRequest.DomainName = name;
@@ -113,8 +128,11 @@ namespace SitefinityWebApp
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         public bool IndexExists(string indexName)
         {
-            using (
-            IAmazonCloudSearch cloudSearchClient = AWSClientFactory.CreateAmazonCloudSearchClient("AKIAJ6MPIX37TLIXW7HQ", "DnrFrw9ZEr7g4Svh0rh6z+s3PxMaypl607eEUehQ", RegionEndpoint.EUWest1))
+            ConfigManager manager = ConfigManager.GetManager();
+            var searchConfig = manager.GetSection<SearchConfig>();
+
+            var amazonSearchParameters = searchConfig.SearchServices[AmazonSearchService.ServiceName].Parameters;
+            using (IAmazonCloudSearch cloudSearchClient = AWSClientFactory.CreateAmazonCloudSearchClient(amazonSearchParameters[AccessKey], amazonSearchParameters[SecretAccessKey], RegionEndpoint.EUWest1))
             {
                 bool exists = false;
                 try
@@ -208,7 +226,11 @@ namespace SitefinityWebApp
         {
             AmazonCloudSearchDomainConfig config = new AmazonCloudSearchDomainConfig();
             config.ServiceURL = "http://search-index2-cdduimbipgk3rpnfgny6posyzy.eu-west-1.cloudsearch.amazonaws.com/";
-            AmazonCloudSearchDomainClient domainClient = new AmazonCloudSearchDomainClient("AKIAJ6MPIX37TLIXW7HQ", "DnrFrw9ZEr7g4Svh0rh6z+s3PxMaypl607eEUehQ", config);
+            ConfigManager manager = ConfigManager.GetManager();
+            var searchConfig = manager.GetSection<SearchConfig>();
+
+            var amazonSearchParameters = searchConfig.SearchServices[AmazonSearchService.ServiceName].Parameters;            
+            AmazonCloudSearchDomainClient domainClient = new AmazonCloudSearchDomainClient(amazonSearchParameters[AccessKey], amazonSearchParameters[SecretAccessKey], config);
             SearchRequest searchRequest = new SearchRequest();
             List<string> suggestions = new List<string>();
             StringBuilder highlights = new StringBuilder();
@@ -287,6 +309,6 @@ namespace SitefinityWebApp
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Aws")]
         public const string AwsAccessKey = "AwsAccessKey";
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Aws")]
-        public const string AwsSecretAccessKey = "AKIAJ6MPIX37TLIXW7HQ";
+        public const string AwsSecretAccessKey = string.Empty;
     }
 }
