@@ -8,7 +8,7 @@ using Telerik.Sitefinity.Services.Search.Data;
 using Telerik.Sitefinity.Services.Search.Model;
 using Telerik.Sitefinity.Services.Search.Publishing;
 
-namespace AmazonCloudSearch
+namespace Telerik.Sitefinity.AmazonCloudSearch
 {
     [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
     public class AmazonDoc : Document, ICloudSearchDocument

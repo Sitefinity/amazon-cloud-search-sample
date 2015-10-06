@@ -1173,9 +1173,9 @@
     <Content Include="App_Data\RadSpell\fr-FR.tdf" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\AmazonCloudSearch\AmazonCloudSearch.csproj">
+    <ProjectReference Include="..\AmazonCloudSearch\Telerik.Sitefinity.AmazonCloudSearch.csproj">
       <Project>{183818da-a289-41d8-a93d-ed7deacc4cdc}</Project>
-      <Name>AmazonCloudSearch</Name>
+      <Name>Telerik.Sitefinity.AmazonCloudSearch</Name>
     </ProjectReference>
     <ProjectReference Include="..\Telerik.Sitefinity.Samples.Common\Telerik.Sitefinity.Samples.Common.csproj">
       <Name>Telerik.Sitefinity.Samples.Common</Name>

@@ -18,7 +18,7 @@ using Telerik.Sitefinity.Services.Search.Web.UI.Public;
 using Telerik.Sitefinity.Configuration;
 using Telerik.Sitefinity.Services.Search.Configuration;
 
-namespace AmazonCloudSearch
+namespace Telerik.Sitefinity.AmazonCloudSearch
 {
     public class AmazonSearchService : ISearchService
     {

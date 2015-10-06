@@ -1,18 +1,17 @@
 ﻿using System.Runtime.InteropServices;
 using System.Web;
-using System.Web.UI;
 using System.Reflection;
-using AmazonCloudSearch;
+using Telerik.Sitefinity.AmazonCloudSearch;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("AmazonCloudSearch")]
+[assembly: AssemblyTitle("Telerik.Sitefinity.AmazonCloudSearch")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("AmazonCloudSearch")]
-[assembly: AssemblyCopyright("Copyright ©  2015")]
+[assembly: AssemblyCompany("Telerik AD")]
+[assembly: AssemblyProduct("Telerik.Sitefinity.AmazonCloudSearch")]
+[assembly: AssemblyCopyright("Copyright © 2005-2015 Telerik AD")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

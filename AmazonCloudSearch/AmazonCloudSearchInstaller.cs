@@ -11,7 +11,7 @@ using Telerik.Sitefinity.Services.Search;
 using Telerik.Sitefinity.Services.Search.Configuration;
 using Telerik.Sitefinity.Utilities.TypeConverters;
 
-namespace AmazonCloudSearch
+namespace Telerik.Sitefinity.AmazonCloudSearch
 {
     public static class AmazonCloudSearchInstaller
     {
