@@ -30,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <DocumentationFile>bin\Release\AmazonCloudSearch.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AmazingCloudSearch, Version=1.0.0.1, Culture=neutral, processorArchitecture=MSIL">
