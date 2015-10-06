@@ -13,7 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{DB44C1
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telerik.Sitefinity.AmazonCloudSearch", "AmazonCloudSearch\Telerik.Sitefinity.AmazonCloudSearch.csproj", "{183818DA-A289-41D8-A93D-ED7DEACC4CDC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Telerik.Sitefinity.AmazonCloudSearch", "Telerik.Sitefinity.AmazonCloudSearch\Telerik.Sitefinity.AmazonCloudSearch.csproj", "{183818DA-A289-41D8-A93D-ED7DEACC4CDC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
