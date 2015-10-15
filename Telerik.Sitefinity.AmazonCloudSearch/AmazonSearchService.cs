@@ -17,6 +17,7 @@ using Telerik.Sitefinity.Services.Search.Data;
 using Telerik.Sitefinity.Services.Search.Web.UI.Public;
 using Telerik.Sitefinity.Configuration;
 using Telerik.Sitefinity.Services.Search.Configuration;
+using System.Collections.Specialized;
 
 namespace Telerik.Sitefinity.AmazonCloudSearch
 {
@@ -25,18 +26,15 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         public void CreateIndex(string name, IEnumerable<IFieldDefinition> fieldDefinitions)
         {
-            ConfigManager manager = ConfigManager.GetManager();
-            var searchConfig = manager.GetSection<SearchConfig>();
-
-            var amazonSearchParameters = searchConfig.SearchServices[AmazonSearchService.ServiceName].Parameters;
+            var amazonSearchParameters = this.GetAmazonParams();
+            var region = RegionEndpoint.GetBySystemName(amazonSearchParameters[Region]);
             //You must add here your accessKey and SecretAccessKey. See here how to get them: http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html
-            using (IAmazonCloudSearch cloudSearchClient = AWSClientFactory.CreateAmazonCloudSearchClient(amazonSearchParameters[AccessKey], amazonSearchParameters[SecretAccessKey], RegionEndpoint.EUWest1))
+            using (IAmazonCloudSearch cloudSearchClient = AWSClientFactory.CreateAmazonCloudSearchClient(amazonSearchParameters[AccessKey], amazonSearchParameters[SecretAccessKey], region))
             {
                 try
                 {
-                    
                     var domainNames = cloudSearchClient.ListDomainNames();
-                    if(!domainNames.DomainNames.ContainsKey(name))
+                    if (!domainNames.DomainNames.ContainsKey(name))
                     {
                         CreateDomainRequest domainRequest = new CreateDomainRequest();
                         domainRequest.DomainName = name;
@@ -71,11 +69,13 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
                         suggesterOptions.FuzzyMatching = SuggesterFuzzyMatching.None;
                         suggesterOptions.SourceField = field.ToLowerInvariant();
                         suggester.DocumentSuggesterOptions = suggesterOptions;
-                        suggester.SuggesterName = field.ToLowerInvariant() + "_suggester";
+                        suggester.SuggesterName = this.GetSuggesterName(field);
                         DefineSuggesterRequest defineRequest = new DefineSuggesterRequest();
                         defineRequest.DomainName = name;
                         defineRequest.Suggester = suggester;
-                        cloudSearchClient.DefineSuggester(defineRequest);
+
+                        // You can use the response to handle errors
+                        var responce = cloudSearchClient.DefineSuggester(defineRequest);
                     }
 
                     searchResults.Dispose();
@@ -102,11 +102,9 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         public void DeleteIndex(string name)
         {
-            ConfigManager manager = ConfigManager.GetManager();
-            var searchConfig = manager.GetSection<SearchConfig>();
-
-            var amazonSearchParameters = searchConfig.SearchServices[AmazonSearchService.ServiceName].Parameters;
-            using (IAmazonCloudSearch cloudSearchClient = AWSClientFactory.CreateAmazonCloudSearchClient(amazonSearchParameters[AccessKey], amazonSearchParameters[SecretAccessKey], RegionEndpoint.EUWest1))
+            var amazonSearchParameters = this.GetAmazonParams();
+            var region = RegionEndpoint.GetBySystemName(amazonSearchParameters[Region]);
+            using (IAmazonCloudSearch cloudSearchClient = AWSClientFactory.CreateAmazonCloudSearchClient(amazonSearchParameters[AccessKey], amazonSearchParameters[SecretAccessKey], region))
             {
                 DeleteDomainRequest domainRequest = new DeleteDomainRequest();
                 domainRequest.DomainName = name;
@@ -128,18 +126,15 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         public bool IndexExists(string indexName)
         {
-            ConfigManager manager = ConfigManager.GetManager();
-            var searchConfig = manager.GetSection<SearchConfig>();
-
-            var amazonSearchParameters = searchConfig.SearchServices[AmazonSearchService.ServiceName].Parameters;
-            using (IAmazonCloudSearch cloudSearchClient = AWSClientFactory.CreateAmazonCloudSearchClient(amazonSearchParameters[AccessKey], amazonSearchParameters[SecretAccessKey], RegionEndpoint.EUWest1))
+            var amazonSearchParameters = this.GetAmazonParams();
+            var region = RegionEndpoint.GetBySystemName(amazonSearchParameters[Region]);
+            using (IAmazonCloudSearch cloudSearchClient = AWSClientFactory.CreateAmazonCloudSearchClient(amazonSearchParameters[AccessKey], amazonSearchParameters[SecretAccessKey], region))
             {
                 bool exists = false;
                 try
                 {
                     ListDomainNamesResponse response = cloudSearchClient.ListDomainNames();
-                    var index = response.DomainNames.Where(dn => dn.Key == indexName).First();
-                    exists = index.Value != null;
+                    exists = response.DomainNames.ContainsKey(indexName);
                 }
                 catch (BaseException ex)
                 {
@@ -162,7 +157,8 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         public void RemoveDocuments(string indexName, IEnumerable<IDocument> documents)
         {
-            CloudSearch<AmazonDoc> cloudSearch = new CloudSearch<AmazonDoc>("index2-cdduimbipgk3rpnfgny6posyzy.eu-west-1.cloudsearch.amazonaws.com", "2013-01-01");
+            var amazonSearchParameters = this.GetAmazonParams();
+            CloudSearch<AmazonDoc> cloudSearch = new CloudSearch<AmazonDoc>(amazonSearchParameters[DocumentEndPoint], amazonSearchParameters[ApiVersion]);
             cloudSearch.Delete(documents.Select(d => new AmazonDoc(d)).ToList());
         }
 
@@ -224,14 +220,11 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         public IResultSet Search(ISearchQuery query)
         {
+            var amazonSearchParameters = this.GetAmazonParams();
             AmazonCloudSearchDomainConfig config = new AmazonCloudSearchDomainConfig();
-            config.ServiceURL = "http://search-index2-cdduimbipgk3rpnfgny6posyzy.eu-west-1.cloudsearch.amazonaws.com/";
-            ConfigManager manager = ConfigManager.GetManager();
-            var searchConfig = manager.GetSection<SearchConfig>();
+            config.ServiceURL = amazonSearchParameters[SearchEndPoint];
 
-            var amazonSearchParameters = searchConfig.SearchServices[AmazonSearchService.ServiceName].Parameters;            
             AmazonCloudSearchDomainClient domainClient = new AmazonCloudSearchDomainClient(amazonSearchParameters[AccessKey], amazonSearchParameters[SecretAccessKey], config);
-            SearchRequest searchRequest = new SearchRequest();
             List<string> suggestions = new List<string>();
             StringBuilder highlights = new StringBuilder();
             highlights.Append("{\'");
@@ -246,12 +239,11 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
                     highlights.Append(", \'");
                 }
 
-                highlights.Append(field.ToUpperInvariant());
+                highlights.Append(field.ToLowerInvariant());
                 highlights.Append("\':{} ");
+
                 SuggestRequest suggestRequest = new SuggestRequest();
-                Suggester suggester = new Suggester();
-                suggester.SuggesterName = field.ToUpperInvariant() + "_suggester";
-                suggestRequest.Suggester = suggester.SuggesterName;
+                suggestRequest.Suggester = this.GetSuggesterName(field);
                 suggestRequest.Size = query.Take;
                 suggestRequest.Query = query.Text;
                 SuggestResponse suggestion = domainClient.Suggest(suggestRequest);
@@ -262,6 +254,8 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
             }
 
             highlights.Append("}");
+
+            SearchRequest searchRequest = new SearchRequest();
 
             if (query.Filter != null)
             {
@@ -287,15 +281,32 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
             searchRequest.Query = query.Text;
             searchRequest.QueryParser = QueryParser.Simple;
             var result = domainClient.Search(searchRequest).SearchResult;
-            
+
             return new AmazonResultSet(result, suggestions);
         }
 
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         public void UpdateIndex(string name, IEnumerable<IDocument> documents)
         {
-            CloudSearch<AmazonDoc> cloudSearch = new CloudSearch<AmazonDoc>("index2-cdduimbipgk3rpnfgny6posyzy.eu-west-1.cloudsearch.amazonaws.com", "2013-01-01");
-            cloudSearch.Update(documents.Select(d => new AmazonDoc(d)).ToList());
+            var amazonParams = this.GetAmazonParams();
+            CloudSearch<AmazonDoc> cloudSearch = new CloudSearch<AmazonDoc>(amazonParams[DocumentEndPoint], amazonParams[ApiVersion]);
+
+            // You can use the result to handle errors
+            var result = cloudSearch.Update(documents.Select(d => new AmazonDoc(d)).ToList());
+        }
+
+        private NameValueCollection GetAmazonParams()
+        {
+            ConfigManager manager = ConfigManager.GetManager();
+            var searchConfig = manager.GetSection<SearchConfig>();
+
+            var amazonSearchParameters = searchConfig.SearchServices[AmazonSearchService.ServiceName].Parameters;
+            return amazonSearchParameters;
+        }
+
+        private string GetSuggesterName(string fieldName)
+        {
+            return field.ToLowerInvariant() + "_suggester";
         }
 
         public const string ServiceName = "AmazonSearchService";
@@ -303,8 +314,11 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
         public const string SecretAccessKey = "SecretAccessKey";
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Api")]
         public const string ApiVersion = "ApiVersion";
-        public const string DocumentEndPoint = "DocumentEndPoint";
         public const string SearchEndPoint = "SearchEndPoint";
+        public const string DocumentEndPoint = "DocumentEndPoint";
+
+        // The regions are described here: http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region
+        public const string Region = "Region";
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Aws")]
         public const string AwsAccessKey = "AwsAccessKey";

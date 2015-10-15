@@ -5,10 +5,7 @@ using System.Text;
 using Telerik.Sitefinity;
 using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.Configuration;
-<<<<<<< HEAD:Telerik.Sitefinity.AmazonCloudSearch/AmazonCloudSearchInstaller.cs
-=======
 using Telerik.Sitefinity.Data;
->>>>>>> refs/remotes/origin/master:SitefinityWebApp/Global.asax.cs
 using Telerik.Sitefinity.Search.Configuration;
 using Telerik.Sitefinity.Services;
 using Telerik.Sitefinity.Services.Search;
