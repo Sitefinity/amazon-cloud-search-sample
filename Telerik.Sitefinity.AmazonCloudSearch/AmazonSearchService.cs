@@ -306,7 +306,7 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
 
         private string GetSuggesterName(string fieldName)
         {
-            return field.ToLowerInvariant() + "_suggester";
+            return fieldName.ToLowerInvariant() + "_suggester";
         }
 
         public const string ServiceName = "AmazonSearchService";
