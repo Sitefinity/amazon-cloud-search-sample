@@ -8,7 +8,6 @@ using Telerik.Sitefinity;
 using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.Configuration;
 using Telerik.Sitefinity.Data;
-using Telerik.Sitefinity.Samples.Common;
 using Telerik.Sitefinity.Search.Configuration;
 using Telerik.Sitefinity.Services;
 using Telerik.Sitefinity.Services.Search;
@@ -64,12 +63,24 @@ namespace SitefinityWebApp
             var searchConfig = manager.GetSection<SearchConfig>();
             
             var amazonSearchParameters = searchConfig.SearchServices[AmazonSearchService.ServiceName].Parameters;
-            
-            amazonSearchParameters.Add(AmazonSearchService.AccessKey, string.Empty);
-            amazonSearchParameters.Add(AmazonSearchService.ApiVersion, string.Empty);
-            amazonSearchParameters.Add(AmazonSearchService.DocumentEndPoint, string.Empty);
-            amazonSearchParameters.Add(AmazonSearchService.SearchEndPoint, string.Empty);
-            amazonSearchParameters.Add(AmazonSearchService.SecretAccessKey, string.Empty);
+
+            if (!amazonSearchParameters.Keys.Contains(AmazonSearchService.AccessKey))
+                amazonSearchParameters.Add(AmazonSearchService.AccessKey, string.Empty);
+
+            if (!amazonSearchParameters.Keys.Contains(AmazonSearchService.ApiVersion))
+                amazonSearchParameters.Add(AmazonSearchService.ApiVersion, "2013-01-01");
+
+            if (!amazonSearchParameters.Keys.Contains(AmazonSearchService.SearchEndPoint))
+                amazonSearchParameters.Add(AmazonSearchService.SearchEndPoint, string.Empty);
+
+            if (!amazonSearchParameters.Keys.Contains(AmazonSearchService.DocumentEndPoint))
+                amazonSearchParameters.Add(AmazonSearchService.DocumentEndPoint, string.Empty);
+
+            if (!amazonSearchParameters.Keys.Contains(AmazonSearchService.SecretAccessKey))
+                amazonSearchParameters.Add(AmazonSearchService.SecretAccessKey, string.Empty);
+
+            if (!amazonSearchParameters.Keys.Contains(AmazonSearchService.Region))
+                amazonSearchParameters.Add(AmazonSearchService.Region, string.Empty);
 
             using (ElevatedConfigModeRegion config = new ElevatedConfigModeRegion())
             {
