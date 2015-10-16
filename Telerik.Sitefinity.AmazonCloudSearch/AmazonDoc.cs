@@ -44,6 +44,7 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
                 fields.Add(convertedField);
             }
 
+            this.IdentityField = doc.IdentityField;
             this.Fields = fields;
         }
 
