@@ -1,23 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Globalization;
 using System.Linq;
-using System.Security;
 using System.Security.Permissions;
 using System.Text;
 using AmazingCloudSearch;
+using AmazingCloudSearch.Contract.Result;
 using Amazon;
 using Amazon.CloudSearch;
 using Amazon.CloudSearch.Model;
 using Amazon.CloudSearchDomain;
 using Amazon.CloudSearchDomain.Model;
 using Telerik.Sitefinity.Abstractions;
+using Telerik.Sitefinity.Configuration;
 using Telerik.Sitefinity.Services.Search;
+using Telerik.Sitefinity.Services.Search.Configuration;
 using Telerik.Sitefinity.Services.Search.Data;
 using Telerik.Sitefinity.Services.Search.Web.UI.Public;
-using Telerik.Sitefinity.Configuration;
-using Telerik.Sitefinity.Services.Search.Configuration;
-using System.Collections.Specialized;
 
 namespace Telerik.Sitefinity.AmazonCloudSearch
 {
@@ -74,8 +74,7 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
                         defineRequest.DomainName = name;
                         defineRequest.Suggester = suggester;
 
-                        // You can use the response to handle errors
-                        var responce = cloudSearchClient.DefineSuggester(defineRequest);
+                        cloudSearchClient.DefineSuggester(defineRequest);
                     }
 
                     searchResults.Dispose();
@@ -159,7 +158,11 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
         {
             var amazonSearchParameters = this.GetAmazonParams();
             CloudSearch<AmazonDoc> cloudSearch = new CloudSearch<AmazonDoc>(amazonSearchParameters[DocumentEndPoint], amazonSearchParameters[ApiVersion]);
-            cloudSearch.Delete(documents.Select(d => new AmazonDoc(d)).ToList());
+            var result = cloudSearch.Delete(documents.Select(d => new AmazonDoc(d)).ToList());
+            if (result.IsError)
+            {
+                Log.Write(string.Format("Failed to remove documents from search index '{0}'. Errors: {1}", indexName, this.GenerateErrorMessage(result)), ConfigurationPolicy.ErrorLog);
+            }
         }
 
         private string BuildQueryFilter(ISearchFilter filter)
@@ -223,7 +226,7 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
             var amazonSearchParameters = this.GetAmazonParams();
             AmazonCloudSearchDomainConfig config = new AmazonCloudSearchDomainConfig();
             config.ServiceURL = amazonSearchParameters[SearchEndPoint];
-
+            
             AmazonCloudSearchDomainClient domainClient = new AmazonCloudSearchDomainClient(amazonSearchParameters[AccessKey], amazonSearchParameters[SecretAccessKey], config);
             List<string> suggestions = new List<string>();
             StringBuilder highlights = new StringBuilder();
@@ -281,7 +284,7 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
             searchRequest.Query = query.Text;
             searchRequest.QueryParser = QueryParser.Simple;
             var result = domainClient.Search(searchRequest).SearchResult;
-
+            
             return new AmazonResultSet(result, suggestions);
         }
 
@@ -293,6 +296,10 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
 
             // You can use the result to handle errors
             var result = cloudSearch.Update(documents.Select(d => new AmazonDoc(d)).ToList());
+            if (result.IsError)
+            {
+                Log.Write(string.Format("Failed to update search index '{0}'. Errors: {1}", name, this.GenerateErrorMessage(result)), ConfigurationPolicy.ErrorLog);
+            }
         }
 
         private NameValueCollection GetAmazonParams()
@@ -307,6 +314,11 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
         private string GetSuggesterName(string fieldName)
         {
             return fieldName.ToLowerInvariant() + "_suggester";
+        }
+
+        private string GenerateErrorMessage(BasicResult result)
+        {
+            return result.errors.Select(e => e.message).Aggregate((i, j) => string.Concat(i, ". ", j));
         }
 
         public const string ServiceName = "AmazonSearchService";
