@@ -3,10 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Permissions;
-using System.Text.RegularExpressions;
 using Amazon.CloudSearchDomain.Model;
-using Telerik.Newtonsoft.Json;
-using Telerik.Newtonsoft.Json.Linq;
 using Telerik.Sitefinity.Publishing;
 using Telerik.Sitefinity.Services.Search.Data;
 using Telerik.Sitefinity.Services.Search.Model;
@@ -52,24 +49,7 @@ namespace SitefinityWebApp
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Security", "CA2123:OverrideLinkDemandsShouldBeIdenticalToBase")]
         public IEnumerator<IDocument> GetEnumerator()
         {
-            if (this.response.Hit.Count > 0)
-            {
-                return this.response.Hit.Select(h => this.GetDocumentWithAdditionalFields(h)).Cast<IDocument>().GetEnumerator();
-            }
-            else
-            {
-                return this.GetSuggestions().GetEnumerator();
-            }
-        }
-
-        private IEnumerable<IDocument> GetSuggestions()
-        {
-            List<IField> listOfFields = new List<IField>();
-            listOfFields.Add(new Field() { Name = PublishingConstants.SuggestionsField, Value = this.suggestions });
-            List<IDocument> documents = new List<IDocument>();
-            var document = new Document(listOfFields, null);
-            documents.Add(document);
-            return documents;
+            return this.response.Hit.Select(h => this.GetDocumentWithAdditionalFields(h)).Cast<IDocument>().GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
