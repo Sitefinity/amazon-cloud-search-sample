@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("Telerik.Sitefinity.Samples.Common")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Microsoft")]
+[assembly: AssemblyCompany("Telerik AD")]
 [assembly: AssemblyProduct("Telerik.Sitefinity.Samples.Common")]
-[assembly: AssemblyCopyright("Copyright © Microsoft 2011")]
+[assembly: AssemblyCopyright("Copyright © 2005-2015 Telerik AD")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

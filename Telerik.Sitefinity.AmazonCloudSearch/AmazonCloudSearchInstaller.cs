@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.Security;
-using System.Web.SessionState;
+using System.Text;
 using Telerik.Sitefinity;
 using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.Configuration;
@@ -14,25 +12,27 @@ using Telerik.Sitefinity.Services.Search;
 using Telerik.Sitefinity.Services.Search.Configuration;
 using Telerik.Sitefinity.Utilities.TypeConverters;
 
-namespace SitefinityWebApp
+namespace Telerik.Sitefinity.AmazonCloudSearch
 {
-    public class Global : System.Web.HttpApplication
+    public static class AmazonCloudSearchInstaller
     {
-        protected void Application_Start(object sender, EventArgs e)
+        /// <summary>
+        /// Called before the application start.
+        /// </summary>
+        public static void PreApplicationStart()
         {
-            //SystemManager.ApplicationStart += this.SystemManager_ApplicationStart;
             Bootstrapper.Initialized += Bootstrapper_Initialized;
         }
 
-        private void Bootstrapper_Initialized(object sender, ExecutedEventArgs e)
+        static void Bootstrapper_Initialized(object sender, Telerik.Sitefinity.Data.ExecutedEventArgs e)
         {
             if ((Bootstrapper.IsDataInitialized) && (e.CommandName == "Bootstrapped"))
             {
                 var typeName = typeof(AmazonSearchService).FullName;
                 App.WorkWith()
-                  .Module(SearchModule.ModuleName)
-                  .Initialize()
-                  .Localization<AmazonResources>();
+                   .Module(SearchModule.ModuleName)
+                   .Initialize()
+                   .Localization<AmazonResources>();
 
                 AddAmazonService(typeName);
                 RegisterAmazonService(typeName);
@@ -41,25 +41,9 @@ namespace SitefinityWebApp
             }
         }
 
-        //private void SystemManager_ApplicationStart(object sender, EventArgs e)
-        //{
-        //    //SampleUtilities.CreateUsersAndRoles();  
-   
-        //    var typeName = typeof(AmazonSearchService).FullName;
-        //    App.WorkWith()
-        //      .Module(SearchModule.ModuleName)
-        //      .Initialize()
-        //      .Localization<AmazonResources>();
-
-        //    AddAmazonService(typeName);
-        //    RegisterAmazonService(typeName);
-            
-        //    SetProperties();
-        //}       
-
-        private static void SetProperties()
+             private static void SetProperties()
         {
-            ConfigManager manager = ConfigManager.GetManager();
+            var manager = ConfigManager.GetManager();
             var searchConfig = manager.GetSection<SearchConfig>();
             
             var amazonSearchParameters = searchConfig.SearchServices[AmazonSearchService.ServiceName].Parameters;
@@ -131,30 +115,6 @@ namespace SitefinityWebApp
                     manager.SaveSection(searchConfig);
                 }
             }            
-        }
-
-        protected void Session_Start(object sender, EventArgs e)
-        {
-        }
-
-        protected void Application_BeginRequest(object sender, EventArgs e)
-        {
-        }
-
-        protected void Application_AuthenticateRequest(object sender, EventArgs e)
-        {
-        }
-
-        protected void Application_Error(object sender, EventArgs e)
-        {
-        }
-
-        protected void Session_End(object sender, EventArgs e)
-        {
-        }
-
-        protected void Application_End(object sender, EventArgs e)
-        {
         }
     }
 }
