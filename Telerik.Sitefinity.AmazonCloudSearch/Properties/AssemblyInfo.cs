@@ -11,7 +11,7 @@ using Telerik.Sitefinity.AmazonCloudSearch;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Telerik AD")]
 [assembly: AssemblyProduct("Telerik.Sitefinity.AmazonCloudSearch")]
-[assembly: AssemblyCopyright("Copyright © 2005-2015 Telerik AD")]
+[assembly: AssemblyCopyright("Copyright © 2016 Telerik")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
