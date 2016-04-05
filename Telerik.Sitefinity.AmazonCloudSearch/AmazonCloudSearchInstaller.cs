@@ -21,12 +21,12 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
         /// </summary>
         public static void PreApplicationStart()
         {
-            Bootstrapper.Initialized += Bootstrapper_Initialized;
+            SystemManager.ApplicationStart += SystemManager_ApplicationStart;
         }
 
-        static void Bootstrapper_Initialized(object sender, Telerik.Sitefinity.Data.ExecutedEventArgs e)
+        static void SystemManager_ApplicationStart(object sender, EventArgs e)
         {
-            if ((Bootstrapper.IsDataInitialized) && (e.CommandName == "Bootstrapped"))
+            if (SystemManager.ApplicationModules.Any(p => p.Key == SearchModule.ModuleName))
             {
                 var typeName = typeof(AmazonSearchService).FullName;
                 App.WorkWith()
@@ -41,11 +41,11 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
             }
         }
 
-             private static void SetProperties()
+        private static void SetProperties()
         {
             var manager = ConfigManager.GetManager();
             var searchConfig = manager.GetSection<SearchConfig>();
-            
+
             var amazonSearchParameters = searchConfig.SearchServices[AmazonSearchService.ServiceName].Parameters;
 
             if (!amazonSearchParameters.Keys.Contains(AmazonSearchService.AccessKey))
@@ -88,7 +88,7 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
                     }
                 }
             }
-            catch (Exception ex)  
+            catch (Exception ex)
             {
                 Log.Write(ex.InnerException.Message);
             }
@@ -99,7 +99,7 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
         {
             ConfigManager manager = ConfigManager.GetManager();
             var searchConfig = manager.GetSection<SearchConfig>();
-                       
+
             if (!searchConfig.SearchServices.ContainsKey(AmazonSearchService.ServiceName))
             {
                 searchConfig.SearchServices.Add(new SearchServiceSettings(searchConfig.SearchServices)
@@ -114,7 +114,7 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
                 {
                     manager.SaveSection(searchConfig);
                 }
-            }            
+            }
         }
     }
 }
