@@ -21,23 +21,26 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
         /// </summary>
         public static void PreApplicationStart()
         {
-            SystemManager.ApplicationStart += SystemManager_ApplicationStart;
+            Bootstrapper.Initialized += Bootstrapper_Initialized;
         }
 
-        static void SystemManager_ApplicationStart(object sender, EventArgs e)
+        static void Bootstrapper_Initialized(object sender, Telerik.Sitefinity.Data.ExecutedEventArgs e)
         {
-            if (SystemManager.ApplicationModules.Any(p => p.Key == SearchModule.ModuleName))
+            if ((Bootstrapper.IsDataInitialized) && (e.CommandName == "Bootstrapped"))
             {
-                var typeName = typeof(AmazonSearchService).FullName;
-                App.WorkWith()
-                   .Module(SearchModule.ModuleName)
-                   .Initialize()
-                   .Localization<AmazonResources>();
+                if (SystemManager.ApplicationModules.Any(p => p.Key == SearchModule.ModuleName))
+                {
+                    var typeName = typeof(AmazonSearchService).FullName;
+                    App.WorkWith()
+                       .Module(SearchModule.ModuleName)
+                       .Initialize()
+                       .Localization<AmazonResources>();
 
-                AddAmazonService(typeName);
-                RegisterAmazonService(typeName);
+                    AddAmazonService(typeName);
+                    RegisterAmazonService(typeName);
 
-                SetProperties();
+                    SetProperties();
+                }
             }
         }
 
