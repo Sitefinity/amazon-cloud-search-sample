@@ -1,15 +1,15 @@
-﻿namespace SitefinityWebApp
-{
-    using System;
-    using System.Collections.Generic;
-    using System.Globalization;
-    using System.Linq;
-    using System.Security.Permissions;
-    using AmazingCloudSearch.Contract;
-    using Telerik.Sitefinity.Services.Search.Data;
-    using Telerik.Sitefinity.Services.Search.Model;
-    using Telerik.Sitefinity.Services.Search.Publishing;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Security.Permissions;
+using AmazingCloudSearch.Contract;
+using Telerik.Sitefinity.Services.Search.Data;
+using Telerik.Sitefinity.Services.Search.Model;
+using Telerik.Sitefinity.Services.Search.Publishing;
 
+namespace Telerik.Sitefinity.AmazonCloudSearch
+{
     [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
     public class AmazonDoc : Document, ICloudSearchDocument
     {
@@ -44,8 +44,9 @@
                 fields.Add(convertedField);
             }
 
+            this.IdentityField = doc.IdentityField;
             this.Fields = fields;
-        }        
+        }
 
         /// <summary>
         /// Gets or sets a value indicating the identity field.

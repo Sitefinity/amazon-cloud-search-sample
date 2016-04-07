@@ -1,39 +1,38 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
-using System.Web.Security;
-using System.Web.SessionState;
+using System.Text;
 using Telerik.Sitefinity;
 using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.Configuration;
 using Telerik.Sitefinity.Data;
-using Telerik.Sitefinity.Samples.Common;
 using Telerik.Sitefinity.Search.Configuration;
 using Telerik.Sitefinity.Services;
 using Telerik.Sitefinity.Services.Search;
 using Telerik.Sitefinity.Services.Search.Configuration;
 using Telerik.Sitefinity.Utilities.TypeConverters;
 
-namespace SitefinityWebApp
+namespace Telerik.Sitefinity.AmazonCloudSearch
 {
-    public class Global : System.Web.HttpApplication
+    public static class AmazonCloudSearchInstaller
     {
-        protected void Application_Start(object sender, EventArgs e)
+        /// <summary>
+        /// Called before the application start.
+        /// </summary>
+        public static void PreApplicationStart()
         {
-            //SystemManager.ApplicationStart += this.SystemManager_ApplicationStart;
-            Bootstrapper.Initialized += Bootstrapper_Initialized;
+            SystemManager.ApplicationStart += SystemManager_ApplicationStart;
         }
 
-        private void Bootstrapper_Initialized(object sender, ExecutedEventArgs e)
+        static void SystemManager_ApplicationStart(object sender, EventArgs e)
         {
-            if ((Bootstrapper.IsDataInitialized) && (e.CommandName == "Bootstrapped"))
+            if (SystemManager.ApplicationModules.Any(p => p.Key == SearchModule.ModuleName))
             {
                 var typeName = typeof(AmazonSearchService).FullName;
                 App.WorkWith()
-                  .Module(SearchModule.ModuleName)
-                  .Initialize()
-                  .Localization<AmazonResources>();
+                   .Module(SearchModule.ModuleName)
+                   .Initialize()
+                   .Localization<AmazonResources>();
 
                 AddAmazonService(typeName);
                 RegisterAmazonService(typeName);
@@ -42,34 +41,30 @@ namespace SitefinityWebApp
             }
         }
 
-        //private void SystemManager_ApplicationStart(object sender, EventArgs e)
-        //{
-        //    //SampleUtilities.CreateUsersAndRoles();  
-   
-        //    var typeName = typeof(AmazonSearchService).FullName;
-        //    App.WorkWith()
-        //      .Module(SearchModule.ModuleName)
-        //      .Initialize()
-        //      .Localization<AmazonResources>();
-
-        //    AddAmazonService(typeName);
-        //    RegisterAmazonService(typeName);
-            
-        //    SetProperties();
-        //}       
-
         private static void SetProperties()
         {
-            ConfigManager manager = ConfigManager.GetManager();
+            var manager = ConfigManager.GetManager();
             var searchConfig = manager.GetSection<SearchConfig>();
-            
+
             var amazonSearchParameters = searchConfig.SearchServices[AmazonSearchService.ServiceName].Parameters;
-            
-            amazonSearchParameters.Add(AmazonSearchService.AccessKey, string.Empty);
-            amazonSearchParameters.Add(AmazonSearchService.ApiVersion, string.Empty);
-            amazonSearchParameters.Add(AmazonSearchService.DocumentEndPoint, string.Empty);
-            amazonSearchParameters.Add(AmazonSearchService.SearchEndPoint, string.Empty);
-            amazonSearchParameters.Add(AmazonSearchService.SecretAccessKey, string.Empty);
+
+            if (!amazonSearchParameters.Keys.Contains(AmazonSearchService.AccessKey))
+                amazonSearchParameters.Add(AmazonSearchService.AccessKey, string.Empty);
+
+            if (!amazonSearchParameters.Keys.Contains(AmazonSearchService.ApiVersion))
+                amazonSearchParameters.Add(AmazonSearchService.ApiVersion, "2013-01-01");
+
+            if (!amazonSearchParameters.Keys.Contains(AmazonSearchService.SearchEndPoint))
+                amazonSearchParameters.Add(AmazonSearchService.SearchEndPoint, string.Empty);
+
+            if (!amazonSearchParameters.Keys.Contains(AmazonSearchService.DocumentEndPoint))
+                amazonSearchParameters.Add(AmazonSearchService.DocumentEndPoint, string.Empty);
+
+            if (!amazonSearchParameters.Keys.Contains(AmazonSearchService.SecretAccessKey))
+                amazonSearchParameters.Add(AmazonSearchService.SecretAccessKey, string.Empty);
+
+            if (!amazonSearchParameters.Keys.Contains(AmazonSearchService.Region))
+                amazonSearchParameters.Add(AmazonSearchService.Region, string.Empty);
 
             using (ElevatedConfigModeRegion config = new ElevatedConfigModeRegion())
             {
@@ -93,7 +88,7 @@ namespace SitefinityWebApp
                     }
                 }
             }
-            catch (Exception ex)  
+            catch (Exception ex)
             {
                 Log.Write(ex.InnerException.Message);
             }
@@ -104,7 +99,7 @@ namespace SitefinityWebApp
         {
             ConfigManager manager = ConfigManager.GetManager();
             var searchConfig = manager.GetSection<SearchConfig>();
-                       
+
             if (!searchConfig.SearchServices.ContainsKey(AmazonSearchService.ServiceName))
             {
                 searchConfig.SearchServices.Add(new SearchServiceSettings(searchConfig.SearchServices)
@@ -119,31 +114,7 @@ namespace SitefinityWebApp
                 {
                     manager.SaveSection(searchConfig);
                 }
-            }            
-        }
-
-        protected void Session_Start(object sender, EventArgs e)
-        {
-        }
-
-        protected void Application_BeginRequest(object sender, EventArgs e)
-        {
-        }
-
-        protected void Application_AuthenticateRequest(object sender, EventArgs e)
-        {
-        }
-
-        protected void Application_Error(object sender, EventArgs e)
-        {
-        }
-
-        protected void Session_End(object sender, EventArgs e)
-        {
-        }
-
-        protected void Application_End(object sender, EventArgs e)
-        {
+            }
         }
     }
 }

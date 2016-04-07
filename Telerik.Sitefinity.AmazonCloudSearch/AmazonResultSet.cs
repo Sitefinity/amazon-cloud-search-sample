@@ -9,7 +9,7 @@ using Telerik.Sitefinity.Services.Search.Data;
 using Telerik.Sitefinity.Services.Search.Model;
 using Telerik.Sitefinity.Services.Search.Publishing;
 
-namespace SitefinityWebApp
+namespace Telerik.Sitefinity.AmazonCloudSearch
 {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1710:IdentifiersShouldHaveCorrectSuffix"), EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
     public class AmazonResultSet : IResultSet

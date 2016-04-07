@@ -19,7 +19,7 @@ using Telerik.Sitefinity.Services.Search.Configuration;
 using Telerik.Sitefinity.Services.Search.Data;
 using Telerik.Sitefinity.Services.Search.Web.UI.Public;
 
-namespace SitefinityWebApp
+namespace Telerik.Sitefinity.AmazonCloudSearch
 {
     public class AmazonSearchService : ISearchService
     {
@@ -34,7 +34,7 @@ namespace SitefinityWebApp
                 try
                 {
                     var domainNames = cloudSearchClient.ListDomainNames();
-                    if(!domainNames.DomainNames.ContainsKey(name))
+                    if (!domainNames.DomainNames.ContainsKey(name))
                     {
                         CreateDomainRequest domainRequest = new CreateDomainRequest();
                         domainRequest.DomainName = name;

@@ -5,7 +5,7 @@ using System.Web;
 using Telerik.Sitefinity.Localization;
 using Telerik.Sitefinity.Localization.Data;
 
-namespace SitefinityWebApp
+namespace Telerik.Sitefinity.AmazonCloudSearch
 {
     /// <summary>
     /// Represents string resources for UI labels.
