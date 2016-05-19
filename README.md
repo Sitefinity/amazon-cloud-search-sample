@@ -8,7 +8,7 @@ Using the Amazon search sample, you can build an Amazon cloud search service.
 
 ### Requirements
 
-* Sitefinity license
+* Sitefinity CMS license
 * .NET Framework 4
 * Visual Studio 2012
 * Microsoft SQL Server 2008R2 or later versions
@@ -36,11 +36,11 @@ For a history and additional information related to package versions on differen
 2. Modify the **dbType**, **sqlInstance** and **dbName** values to match your server settings.
 3. Build the solution.
 
-For version-specific details about the required Sitefinity NuGet packages for this sample application, click on [Releases](https://github.com/Sitefinity-SDK/amazon-cloud-search-sample/releases).
+For version-specific details about the required Sitefinity CMS NuGet packages for this sample application, click on [Releases](https://github.com/Sitefinity-SDK/amazon-cloud-search-sample/releases).
 
 ### Login
 
-To login to Sitefinity backend, use the following credentials:   
+To login to the Sitefinity CMS backend, use the following credentials:   
 **Username:** admin  
 **Password:** password
 
