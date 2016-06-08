@@ -10,5 +10,4 @@ SitefinityWebApp/App_Data/Sitefinity/Configuration/*
 !SitefinityWebApp/App_Data/Sitefinity/Configuration/StartupConfig.config
 SitefinityWebApp/App_Data/Sitefinity/Logs/*
 *.lic
-SitefinityWebApp/ResourcePackages/*
 *.Cache
