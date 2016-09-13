@@ -195,15 +195,16 @@ namespace SitefinityWebApp
                     value = string.Format("'{0}'", value);
                 }
 
+                var fieldName = clause.Field.ToLowerInvariant();
                 switch (clause.FilterOperator)
                 {
-                    case FilterOperator.Equals: result.Append(string.Format("{0}:{1} ", clause.Field.ToUpperInvariant(), value));
+                    case FilterOperator.Equals: result.Append(string.Format("{0}:{1} ", fieldName, value));
                         break;
-                    case FilterOperator.Contains: result.Append(string.Format("{0}:{1}", clause.Field.ToUpperInvariant(), value));
+                    case FilterOperator.Contains: result.Append(string.Format("{0}:{1}", fieldName, value));
                         break;
-                    case FilterOperator.Greater: result.Append(string.Format("{0}:[{1}, {2}", clause.Field, value, "}"));
+                    case FilterOperator.Greater: result.Append(string.Format("{0}:[{1}, {2}", fieldName, value, "}"));
                         break;
-                    case FilterOperator.Less: result.Append(string.Format("{0}:{2}, {1}]", clause.Field, value, "{"));
+                    case FilterOperator.Less: result.Append(string.Format("{0}:{2}, {1}]", fieldName, value, "{"));
                         break;
                 }
             }
