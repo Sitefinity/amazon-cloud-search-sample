@@ -11,7 +11,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Progress")]
 [assembly: AssemblyProduct("Progress Sitefinity CMS")]
-[assembly: AssemblyCopyright("Copyright © 2005-2016 Telerik AD. All rights reserved.")]
+[assembly: AssemblyCopyright("Copyright © 2005-2017 Telerik AD. All rights reserved.")]
 [assembly: AssemblyTrademark("Sitefinity")]
 [assembly: AssemblyCulture("")]
 
