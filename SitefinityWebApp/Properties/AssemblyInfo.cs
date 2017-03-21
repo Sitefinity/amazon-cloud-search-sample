@@ -1,18 +1,18 @@
 using System.Reflection;
-using System.Resources;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Resources;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Sitefinity CMS Web Application")]
-[assembly: AssemblyDescription("")]
-[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Progress")]
 [assembly: AssemblyProduct("Progress Sitefinity CMS")]
-[assembly: AssemblyCopyright("Â© 2016 Telerik AD. All rights reserved.")]
+[assembly: AssemblyCopyright("Copyright © 2005-2017 Telerik AD. All rights reserved.")]
 [assembly: AssemblyTrademark("Sitefinity")]
+[assembly: AssemblyTitle("Sitefinity Web Application")]
+[assembly: AssemblyDescription("")]
+[assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -33,11 +33,9 @@ using System.Runtime.InteropServices;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("9.0.6000.0")]
-[assembly: AssemblyFileVersion("9.0.6000.0")]
+[assembly: AssemblyVersion("10.0.6400.0")]
+[assembly: AssemblyFileVersion("10.0.6400.0")]
 [assembly: NeutralResourcesLanguageAttribute("en")]
-
-
 
 
 
