@@ -21,10 +21,10 @@
     @foreach (var choice in Model.Choices)
     {
         string value = !string.IsNullOrEmpty(Model.Value as string) ? Model.Value as string : string.Empty;
-		bool isSelected = (!string.IsNullOrEmpty(value) && choice == value) ||
-						  (string.IsNullOrEmpty(value) && !Model.IsRequired && choice == Model.MetaField.DefaultValue as string);
-
-		var optionAttributes = isSelected ? "selected" : string.Empty;
+ 		bool isSelected = (!string.IsNullOrEmpty(value) && choice == value) ||
+ 						  (string.IsNullOrEmpty(value) && !Model.IsRequired && choice == Model.MetaField.DefaultValue as string);
+ 
+ 		var optionAttributes = isSelected ? "selected" : string.Empty;
         var optionValue = Model.IsRequired && choice == Model.Choices.FirstOrDefault() ? string.Empty : choice;
 
         <option @optionAttributes value="@optionValue">@choice</option>

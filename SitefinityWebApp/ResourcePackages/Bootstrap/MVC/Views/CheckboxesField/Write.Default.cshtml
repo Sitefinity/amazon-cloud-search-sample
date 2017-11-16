@@ -23,7 +23,7 @@
     }
     @foreach (var choice in Model.Choices)
     {
-		string value = !string.IsNullOrEmpty(Model.Value as string) ? Model.Value as string : string.Empty;
+        string value = !string.IsNullOrEmpty(Model.Value as string) ? Model.Value as string : string.Empty;
         string selectedValue = !string.IsNullOrEmpty(value) ? value : Model.MetaField.DefaultValue;
         var selctedAttributes = !string.IsNullOrEmpty(selectedValue) && selectedValue.Contains(choice as string) ? "checked" : string.Empty;
         <div class="checkbox">
