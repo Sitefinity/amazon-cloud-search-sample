@@ -23,7 +23,7 @@
         {
             string value = !string.IsNullOrEmpty(Model.Value as string) ? Model.Value as string : string.Empty;
             bool isSelected = (!string.IsNullOrEmpty(value) && choice == value) ||
-                              (string.IsNullOrEmpty(value) && !Model.IsRequired && choice == Model.MetaField.DefaultValue as string);
+                                (string.IsNullOrEmpty(value) && !Model.IsRequired && choice == Model.MetaField.DefaultValue as string);
 
             var selctedAttributes = isSelected ? "checked" : string.Empty;
             <label class="radio-inline">
