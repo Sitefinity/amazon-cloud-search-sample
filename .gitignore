@@ -11,3 +11,4 @@ SitefinityWebApp/App_Data/Sitefinity/Configuration/*
 SitefinityWebApp/App_Data/Sitefinity/Logs/*
 *.lic
 *.Cache
+/.vs
