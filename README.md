@@ -10,7 +10,7 @@ Using the Amazon search sample, you can build an Amazon cloud search service.
 
 * Sitefinity CMS license
 * .NET Framework 4
-* Visual Studio 2012
+* Visual Studio 2017
 * Microsoft SQL Server 2008R2 or later versions
 * [AWS Account](http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSAccounts.html) 
 
