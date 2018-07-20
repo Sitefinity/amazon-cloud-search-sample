@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Text;
 using Telerik.Sitefinity;
@@ -44,34 +45,35 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
             }
         }
 
+        private static void UpdateParameter(NameValueCollection parameters, string key, string value, ref bool updated)
+        {
+            if (parameters.Keys.Contains(key)) return;
+
+            parameters.Add(key, value);
+            updated = true;
+        }
+
         private static void SetProperties()
         {
+            bool updated = false;
             var manager = ConfigManager.GetManager();
             var searchConfig = manager.GetSection<SearchConfig>();
 
             var amazonSearchParameters = searchConfig.SearchServices[AmazonSearchService.ServiceName].Parameters;
 
-            if (!amazonSearchParameters.Keys.Contains(AmazonSearchService.AccessKey))
-                amazonSearchParameters.Add(AmazonSearchService.AccessKey, string.Empty);
+            UpdateParameter(amazonSearchParameters, AmazonSearchService.AccessKey, string.Empty, ref updated);
+            UpdateParameter(amazonSearchParameters, AmazonSearchService.ApiVersion, "2013-01-01", ref updated);
+            UpdateParameter(amazonSearchParameters, AmazonSearchService.SearchEndPoint, string.Empty, ref updated);
+            UpdateParameter(amazonSearchParameters, AmazonSearchService.DocumentEndPoint, string.Empty, ref updated);
+            UpdateParameter(amazonSearchParameters, AmazonSearchService.SecretAccessKey, string.Empty, ref updated);
+            UpdateParameter(amazonSearchParameters, AmazonSearchService.Region, string.Empty, ref updated);
 
-            if (!amazonSearchParameters.Keys.Contains(AmazonSearchService.ApiVersion))
-                amazonSearchParameters.Add(AmazonSearchService.ApiVersion, "2013-01-01");
-
-            if (!amazonSearchParameters.Keys.Contains(AmazonSearchService.SearchEndPoint))
-                amazonSearchParameters.Add(AmazonSearchService.SearchEndPoint, string.Empty);
-
-            if (!amazonSearchParameters.Keys.Contains(AmazonSearchService.DocumentEndPoint))
-                amazonSearchParameters.Add(AmazonSearchService.DocumentEndPoint, string.Empty);
-
-            if (!amazonSearchParameters.Keys.Contains(AmazonSearchService.SecretAccessKey))
-                amazonSearchParameters.Add(AmazonSearchService.SecretAccessKey, string.Empty);
-
-            if (!amazonSearchParameters.Keys.Contains(AmazonSearchService.Region))
-                amazonSearchParameters.Add(AmazonSearchService.Region, string.Empty);
-
-            using (ElevatedConfigModeRegion config = new ElevatedConfigModeRegion())
+            if (updated)
             {
-                manager.SaveSection(searchConfig);
+                using (ElevatedConfigModeRegion config = new ElevatedConfigModeRegion())
+                {
+                    manager.SaveSection(searchConfig);
+                }
             }
         }
 
