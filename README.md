@@ -1,8 +1,6 @@
 # amazon-cloud-search-sample
 =======================================
 
-[![Build Status](http://sdk-jenkins-ci.cloudapp.net/buildStatus/icon?job=Telerik.Sitefinity.Samples.AmazonCloudSearchService.CI)](http://sdk-jenkins-ci.cloudapp.net/job/Telerik.Sitefinity.Samples.AmazonCloudSearchService.CI/)
-
 The Amazon cloud search sample is module-free and is suitable for people who want to build a project from ground-up.   
 Using the Amazon search sample, you can build an Amazon cloud search service.
 
