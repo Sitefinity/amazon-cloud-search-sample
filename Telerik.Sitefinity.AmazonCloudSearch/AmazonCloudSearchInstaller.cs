@@ -38,8 +38,6 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
                        .Localization<AmazonResources>();
 
                     AddAmazonService(typeName);
-                    RegisterAmazonService(typeName);
-
                     SetProperties();
                 }
             }
@@ -74,28 +72,6 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
                 {
                     manager.SaveSection(searchConfig);
                 }
-            }
-        }
-
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
-        private static void RegisterAmazonService(string typeName)
-        {
-            try
-            {
-                var serviceType = TypeResolutionService.ResolveType(typeName, false);
-                if (serviceType != null)
-                {
-                    var service = Activator.CreateInstance(serviceType);
-                    if (service != null)
-                    {
-                        ServiceBus.UnregisterService<ISearchService>();
-                        ServiceBus.RegisterService<ISearchService>(service);
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                Log.Write(ex.InnerException.Message);
             }
         }
 
