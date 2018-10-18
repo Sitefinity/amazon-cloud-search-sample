@@ -322,9 +322,7 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
 
         private NameValueCollection GetAmazonParams()
         {
-            ConfigManager manager = ConfigManager.GetManager();
-            var searchConfig = manager.GetSection<SearchConfig>();
-
+            var searchConfig = Config.Get<SearchConfig>();
             var amazonSearchParameters = searchConfig.SearchServices[AmazonSearchService.ServiceName].Parameters;
             return amazonSearchParameters;
         }
