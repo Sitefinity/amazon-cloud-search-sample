@@ -65,7 +65,6 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
             UpdateParameter(amazonSearchParameters, AmazonSearchService.DocumentEndPoint, string.Empty, ref updated);
             UpdateParameter(amazonSearchParameters, AmazonSearchService.SecretAccessKey, string.Empty, ref updated);
             UpdateParameter(amazonSearchParameters, AmazonSearchService.Region, string.Empty, ref updated);
-            UpdateParameter(amazonSearchParameters, SearchConfig.SkipRemoveOnUpdateParameter, "True", ref updated);
 
             if (updated)
             {
