@@ -198,13 +198,17 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
                 var fieldName = clause.Field.ToLowerInvariant();
                 switch (clause.FilterOperator)
                 {
-                    case FilterOperator.Equals: result.Append(string.Format("{0}:{1} ", fieldName, value));
+                    case FilterOperator.Equals:
+                        result.Append(string.Format("{0}:{1} ", fieldName, value));
                         break;
-                    case FilterOperator.Contains: result.Append(string.Format("{0}:{1}", fieldName, value));
+                    case FilterOperator.Contains:
+                        result.Append(string.Format("{0}:{1}", fieldName, value));
                         break;
-                    case FilterOperator.Greater: result.Append(string.Format("{0}:[{1}, {2}", fieldName, value, "}"));
+                    case FilterOperator.Greater:
+                        result.Append(string.Format("{0}:[{1}, {2}", fieldName, value, "}"));
                         break;
-                    case FilterOperator.Less: result.Append(string.Format("{0}:{2}, {1}]", fieldName, value, "{"));
+                    case FilterOperator.Less:
+                        result.Append(string.Format("{0}:{2}, {1}]", fieldName, value, "{"));
                         break;
                 }
             }
@@ -227,7 +231,7 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
             var amazonSearchParameters = this.GetAmazonParams();
             AmazonCloudSearchDomainConfig config = new AmazonCloudSearchDomainConfig();
             config.ServiceURL = amazonSearchParameters[SearchEndPoint];
-            
+
             AmazonCloudSearchDomainClient domainClient = new AmazonCloudSearchDomainClient(amazonSearchParameters[AccessKey], amazonSearchParameters[SecretAccessKey], config);
             List<string> suggestions = new List<string>();
             StringBuilder highlights = new StringBuilder();
@@ -235,6 +239,8 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
 
             if (query == null)
                 throw new ArgumentNullException("query");
+
+            query.Text = this.ApplyStartsWith(query.Text, query.EnableExactMatch);
 
             foreach (var field in query.HighlightedFields)
             {
@@ -285,7 +291,7 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
             searchRequest.Query = query.Text;
             searchRequest.QueryParser = QueryParser.Simple;
             var result = domainClient.Search(searchRequest).SearchResult;
-            
+
             return new AmazonResultSet(result, suggestions);
         }
 
@@ -296,18 +302,27 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
             CloudSearch<AmazonDoc> cloudSearch = new CloudSearch<AmazonDoc>(amazonParams[DocumentEndPoint], amazonParams[ApiVersion]);
 
             // You can use the result to handle errors
-            var result = cloudSearch.Update(documents.Select(d => new AmazonDoc(d)).ToList());
+            var amazonDocs = documents.Select(d => new AmazonDoc(d)).ToList();
+            var result = cloudSearch.Update(amazonDocs);
             if (result.IsError)
             {
                 Log.Write(string.Format("Failed to update search index '{0}'. Errors: {1}", name, this.GenerateErrorMessage(result)), ConfigurationPolicy.ErrorLog);
             }
         }
 
+        private string ApplyStartsWith(string queryText, bool isExactMatchEnabled)
+        {
+            if (!isExactMatchEnabled && !queryText.EndsWith("*"))
+            {
+                queryText = string.Concat(queryText, "*");
+            }
+
+            return queryText;
+        }
+
         private NameValueCollection GetAmazonParams()
         {
-            ConfigManager manager = ConfigManager.GetManager();
-            var searchConfig = manager.GetSection<SearchConfig>();
-
+            var searchConfig = Config.Get<SearchConfig>();
             var amazonSearchParameters = searchConfig.SearchServices[AmazonSearchService.ServiceName].Parameters;
             return amazonSearchParameters;
         }
