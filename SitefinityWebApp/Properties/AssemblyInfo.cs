@@ -12,7 +12,7 @@ using System.Resources;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Progress")]
 [assembly: AssemblyProduct("Progress Sitefinity CMS")]
-[assembly: AssemblyCopyright("Copyright © 2005-2018 Telerik EAD. All rights reserved.")]
+[assembly: AssemblyCopyright("Copyright © 2005-2018 Progress Software Corporation and/or one of its subsidiaries or affiliates. All rights reserved.")]
 [assembly: AssemblyTrademark("Sitefinity")]
 [assembly: AssemblyCulture("")]
 
@@ -34,8 +34,8 @@ using System.Resources;
 //
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
-[assembly: AssemblyVersion("11.1.6800.0")]
-[assembly: AssemblyFileVersion("11.1.6800.0")]
+[assembly: AssemblyVersion("11.2.6900.0")]
+[assembly: AssemblyFileVersion("11.2.6900.0")]
 [assembly: NeutralResourcesLanguageAttribute("en")]
 
 [assembly: Telerik.Sitefinity.Frontend.Mvc.Infrastructure.Controllers.Attributes.ControllerContainer]

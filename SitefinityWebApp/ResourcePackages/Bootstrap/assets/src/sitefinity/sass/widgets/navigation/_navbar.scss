@@ -22,12 +22,68 @@
 	}
 }
 
-.navbar-collapse.in {
-	.dropdown-submenu ul {
-		@extend .sf-pl-l; //20px
-		display: block;
-	}
-	.right-caret {
-		display: none;
-	}
+@media (max-width: $screen-xs-max) {
+    .navbar-collapse {
+	    .dropdown-submenu ul {
+            padding-left: 20px;
+		    display: block;
+	    }
+	    .right-caret {
+		    display: none;
+	    }
+    }
+}
+
+//Rtl support
+
+@if $has-rtl-support {
+
+  @include rtl-cultures {
+    .nav {
+       @extend .sf-pr-xxs; //0
+    }
+
+    //Navbar
+
+    .navbar-header {
+        float: right;
+    }
+
+    .navbar-nav {
+        float: right;
+
+        > li {
+            float: right;
+        }
+    }
+
+    .dropdown-menu {
+        left: auto;
+        right: 0;
+    }
+
+    .dropdown-submenu {
+	    &:hover {
+		    > ul {
+                left: 0;
+			    right: 100%;
+		        }
+	     }
+     }
+
+    .right-caret {
+        border-left: 0;
+	    border-right: $right-caret-border-left-width solid;
+    }
+    
+    //Navtabs
+
+    .nav-tabs>li {
+        float: right;
+    }
+
+    .nav-stacked>li {
+        float: none;
+    }
+  }
 }
