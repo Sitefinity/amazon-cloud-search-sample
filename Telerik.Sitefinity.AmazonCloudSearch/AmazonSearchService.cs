@@ -14,10 +14,13 @@ using Amazon.CloudSearchDomain;
 using Amazon.CloudSearchDomain.Model;
 using Telerik.Sitefinity.Abstractions;
 using Telerik.Sitefinity.Configuration;
+using Telerik.Sitefinity.Publishing;
+using Telerik.Sitefinity.Publishing.Configuration;
+using Telerik.Sitefinity.Publishing.Model;
+using Telerik.Sitefinity.Publishing.NewImplementation;
 using Telerik.Sitefinity.Services.Search;
 using Telerik.Sitefinity.Services.Search.Configuration;
 using Telerik.Sitefinity.Services.Search.Data;
-using Telerik.Sitefinity.Services.Search.Web.UI.Public;
 
 namespace Telerik.Sitefinity.AmazonCloudSearch
 {
@@ -61,8 +64,14 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
                         cloudSearchClient.DefineIndexField(request);
                     }
 
-                    SearchResults searchResults = new SearchResults();
-                    foreach (var field in searchResults.HighlightedFields)
+                    var additionalFields = SearchIndexAdditionalFields(name);
+                    List<string> suggesters = new List<string>();
+                    suggesters.AddRange(additionalFields);
+
+                    var defaultIndexedFields = new[] { "Title", "Content" };
+                    suggesters.AddRange(defaultIndexedFields);
+
+                    foreach (var field in suggesters)
                     {
                         Suggester suggester = new Suggester();
                         DocumentSuggesterOptions suggesterOptions = new DocumentSuggesterOptions();
@@ -76,8 +85,6 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
 
                         cloudSearchClient.DefineSuggester(defineRequest);
                     }
-
-                    searchResults.Dispose();
 
                     IndexDocumentsRequest documentRequest = new IndexDocumentsRequest();
                     documentRequest.DomainName = name;
@@ -335,6 +342,12 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
         private string GenerateErrorMessage(BasicResult result)
         {
             return result.errors.Select(e => e.message).Aggregate((i, j) => string.Concat(i, ". ", j));
+        }
+
+        private static IEnumerable<string> SearchIndexAdditionalFields(string name)
+        {
+            PipeSettings settings = PublishingManager.GetManager(PublishingConfig.SearchProviderName).GetPipeSettings<SearchIndexPipeSettings>().Where(ps => ps.CatalogName == name).FirstOrDefault();
+            return PublishingUtilities.SearchIndexAdditionalFields(settings);
         }
 
         public const string ServiceName = "AmazonSearchService";
