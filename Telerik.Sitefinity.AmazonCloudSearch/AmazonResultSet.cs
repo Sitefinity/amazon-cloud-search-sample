@@ -20,7 +20,7 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
         /// <param name="result">The result that holds the data.</param>
         /// <param name="suggestions">The suggestions.</param>
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1002:DoNotExposeGenericLists")]
-        public AmazonResultSet(SearchResult result, List<string> suggestions)
+        public AmazonResultSet(SearchResponse result, List<string> suggestions)
         {
             if (result == null)
                 throw new ArgumentNullException("result");
