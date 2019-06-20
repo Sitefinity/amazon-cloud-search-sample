@@ -64,9 +64,11 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
                         cloudSearchClient.DefineIndexField(request);
                     }
 
-                    var additionalFields = SearchIndexAdditionalFields(name);
                     List<string> suggesters = new List<string>();
-                    suggesters.AddRange(additionalFields);
+
+                    var additionalFields = SearchIndexAdditionalFields(name);
+                    if (additionalFields != null)
+                        suggesters.AddRange(additionalFields);
 
                     var defaultIndexedFields = new[] { "Title", "Content" };
                     suggesters.AddRange(defaultIndexedFields);
