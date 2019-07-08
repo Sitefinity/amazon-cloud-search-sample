@@ -18,6 +18,7 @@ using Telerik.Sitefinity.Publishing;
 using Telerik.Sitefinity.Publishing.Configuration;
 using Telerik.Sitefinity.Publishing.Model;
 using Telerik.Sitefinity.Publishing.NewImplementation;
+using Telerik.Sitefinity.Search;
 using Telerik.Sitefinity.Services.Search;
 using Telerik.Sitefinity.Services.Search.Configuration;
 using Telerik.Sitefinity.Services.Search.Data;
@@ -161,6 +162,9 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
         public void RemoveDocument(string indexName, IField identityField)
         {
         }
+
+        /// <inheritdoc />
+        public SearchType ServiceSearchType { get; set; }
 
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         public void RemoveDocuments(string indexName, IEnumerable<IDocument> documents)
