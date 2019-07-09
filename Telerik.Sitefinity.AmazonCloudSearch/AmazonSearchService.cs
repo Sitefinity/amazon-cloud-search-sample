@@ -163,9 +163,6 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
         {
         }
 
-        /// <inheritdoc />
-        public SearchType ServiceSearchType { get; set; }
-
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         public void RemoveDocuments(string indexName, IEnumerable<IDocument> documents)
         {
@@ -240,6 +237,12 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
 
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         public IResultSet Search(ISearchQuery query)
+        {
+            return this.Search(query, new SearchOptions(SearchType.StartsWith));
+        }
+
+        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
+        public IResultSet Search(ISearchQuery query, SearchOptions searchOptions)
         {
             var amazonSearchParameters = this.GetAmazonParams();
             AmazonCloudSearchDomainConfig config = new AmazonCloudSearchDomainConfig();
