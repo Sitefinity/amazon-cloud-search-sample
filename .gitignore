@@ -13,3 +13,5 @@ SitefinityWebApp/App_Data/Sitefinity/Logs/*
 *.Cache
 /.vs
 /SitefinityWebApp/App_Data
+/License.log
+/Telerik.Sitefinity.AmazonCloudSearch/Telerik.Sitefinity.AmazonCloudSearch.csproj.user

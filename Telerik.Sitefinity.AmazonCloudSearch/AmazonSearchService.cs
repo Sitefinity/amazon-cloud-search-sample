@@ -18,6 +18,7 @@ using Telerik.Sitefinity.Publishing;
 using Telerik.Sitefinity.Publishing.Configuration;
 using Telerik.Sitefinity.Publishing.Model;
 using Telerik.Sitefinity.Publishing.NewImplementation;
+using Telerik.Sitefinity.Search;
 using Telerik.Sitefinity.Services.Search;
 using Telerik.Sitefinity.Services.Search.Configuration;
 using Telerik.Sitefinity.Services.Search.Data;
@@ -32,7 +33,7 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
             var amazonSearchParameters = this.GetAmazonParams();
             var region = RegionEndpoint.GetBySystemName(amazonSearchParameters[Region]);
             //You must add here your accessKey and SecretAccessKey. See here how to get them: http://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSGettingStartedGuide/AWSCredentials.html
-            using (IAmazonCloudSearch cloudSearchClient = AWSClientFactory.CreateAmazonCloudSearchClient(amazonSearchParameters[AccessKey], amazonSearchParameters[SecretAccessKey], region))
+            using (IAmazonCloudSearch cloudSearchClient = new AmazonCloudSearchClient(amazonSearchParameters[AccessKey], amazonSearchParameters[SecretAccessKey], region))
             {
                 try
                 {
@@ -112,7 +113,7 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
         {
             var amazonSearchParameters = this.GetAmazonParams();
             var region = RegionEndpoint.GetBySystemName(amazonSearchParameters[Region]);
-            using (IAmazonCloudSearch cloudSearchClient = AWSClientFactory.CreateAmazonCloudSearchClient(amazonSearchParameters[AccessKey], amazonSearchParameters[SecretAccessKey], region))
+            using (IAmazonCloudSearch cloudSearchClient = new AmazonCloudSearchClient(amazonSearchParameters[AccessKey], amazonSearchParameters[SecretAccessKey], region))
             {
                 DeleteDomainRequest domainRequest = new DeleteDomainRequest();
                 domainRequest.DomainName = name;
@@ -136,7 +137,7 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
         {
             var amazonSearchParameters = this.GetAmazonParams();
             var region = RegionEndpoint.GetBySystemName(amazonSearchParameters[Region]);
-            using (IAmazonCloudSearch cloudSearchClient = AWSClientFactory.CreateAmazonCloudSearchClient(amazonSearchParameters[AccessKey], amazonSearchParameters[SecretAccessKey], region))
+            using (IAmazonCloudSearch cloudSearchClient = new AmazonCloudSearchClient(amazonSearchParameters[AccessKey], amazonSearchParameters[SecretAccessKey], region))
             {
                 bool exists = false;
                 try
@@ -237,6 +238,12 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
         [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
         public IResultSet Search(ISearchQuery query)
         {
+            return this.Search(query, new SearchOptions(SearchType.StartsWith));
+        }
+
+        [EnvironmentPermissionAttribute(SecurityAction.LinkDemand, Unrestricted = true)]
+        public IResultSet Search(ISearchQuery query, SearchOptions searchOptions)
+        {
             var amazonSearchParameters = this.GetAmazonParams();
             AmazonCloudSearchDomainConfig config = new AmazonCloudSearchDomainConfig();
             config.ServiceURL = amazonSearchParameters[SearchEndPoint];
@@ -299,7 +306,7 @@ namespace Telerik.Sitefinity.AmazonCloudSearch
             searchRequest.Highlight = highlights.ToString();
             searchRequest.Query = query.Text;
             searchRequest.QueryParser = QueryParser.Simple;
-            var result = domainClient.Search(searchRequest).SearchResult;
+            var result = domainClient.Search(searchRequest);
 
             return new AmazonResultSet(result, suggestions);
         }
