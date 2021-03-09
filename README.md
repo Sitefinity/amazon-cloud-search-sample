@@ -1,8 +1,11 @@
 # amazon-cloud-search-sample
-=======================================
 
 The Amazon cloud search sample is module-free and is suitable for people who want to build a project from ground-up.   
 Using the Amazon search sample, you can build an Amazon cloud search service.
+
+### Deprecated capabilities
+
+Amazon Cloud Search is no longer supported. If you have Amazon CloudSearch setup, the system status dashboard widget will report an error. We refer you to configure one of the [three built-in search services](https://www.progress.com/documentation/sitefinity-cms/for-developers-compare-search-services) instead.
 
 > **Latest supported version**: Sitefinity CMS 13.2.7500.0
 
